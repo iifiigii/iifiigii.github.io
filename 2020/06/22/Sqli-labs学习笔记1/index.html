@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo,Markdown," />
+  <meta name="keywords" content="Sqli," />
 
 
 
@@ -79,19 +79,25 @@
 
 
 
-<meta name="description" content="一级标题二级标题三级标题四级标题五级标题六级标题">
+<meta name="description" content="记录一下做Sqli-Labs过程中学到的知识点，这次主要是双查询注入(Double Injection)的方法。　　　　　　　 Less-5尝试?id&#x3D;1’显示错误信息尝试?id&#x3D;1’ –+正常通过order by可以发现select得到的是3个字段由于正常情况下，select得到的结果不会显示在页面上，所以无法使用前几关union的方法，查阅相关教程，发现可以利用count(*)、rand()、">
 <meta property="og:type" content="article">
-<meta property="og:title" content="test">
-<meta property="og:url" content="http://yoursite.com/2020/06/21/test/index.html">
+<meta property="og:title" content="Sqli-labs学习笔记1">
+<meta property="og:url" content="http://yoursite.com/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/index.html">
 <meta property="og:site_name" content="Web低手的笔记本">
-<meta property="og:description" content="一级标题二级标题三级标题四级标题五级标题六级标题">
+<meta property="og:description" content="记录一下做Sqli-Labs过程中学到的知识点，这次主要是双查询注入(Double Injection)的方法。　　　　　　　 Less-5尝试?id&#x3D;1’显示错误信息尝试?id&#x3D;1’ –+正常通过order by可以发现select得到的是3个字段由于正常情况下，select得到的结果不会显示在页面上，所以无法使用前几关union的方法，查阅相关教程，发现可以利用count(*)、rand()、">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-06-21T05:21:48.000Z">
-<meta property="article:modified_time" content="2020-06-21T05:31:47.226Z">
+<meta property="og:image" content="http://yoursite.com/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/1">
+<meta property="og:image" content="http://yoursite.com/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/1">
+<meta property="og:image" content="http://yoursite.com/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/orderby.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/success.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/xml.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/outfile.jpg">
+<meta property="article:published_time" content="2020-06-22T06:36:36.000Z">
+<meta property="article:modified_time" content="2020-06-22T09:15:02.585Z">
 <meta property="article:author" content="Cinder">
-<meta property="article:tag" content="Hexo">
-<meta property="article:tag" content="Markdown">
+<meta property="article:tag" content="Sqli">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/1">
 
 
 
@@ -121,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2020/06/21/test/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/06/22/Sqli-labs学习笔记1/"/>
 
 
 
 
 
-  <title>test | Web低手的笔记本</title>
+  <title>Sqli-labs学习笔记1 | Web低手的笔记本</title>
   
 
 
@@ -254,7 +260,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/21/test/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Cinder">
@@ -271,7 +277,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">test</h1>
+          <h1 class="post-title" itemprop="name headline">Sqli-labs学习笔记1</h1>
         
 
         <div class="post-meta">
@@ -283,8 +289,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-21T13:21:48+08:00">
-                2020-06-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-22T14:36:36+08:00">
+                2020-06-22
               </time>
             
 
@@ -306,8 +312,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" itemprop="url" rel="index">
-                    <span itemprop="name">搭建博客</span>
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
                   </a>
                 </span>
 
@@ -343,7 +349,11 @@
       
 
       
-        <h1 id="一级标题"><a href="#一级标题" class="headerlink" title="一级标题"></a>一级标题</h1><h2 id="二级标题"><a href="#二级标题" class="headerlink" title="二级标题"></a>二级标题</h2><h3 id="三级标题"><a href="#三级标题" class="headerlink" title="三级标题"></a>三级标题</h3><h4 id="四级标题"><a href="#四级标题" class="headerlink" title="四级标题"></a>四级标题</h4><h5 id="五级标题"><a href="#五级标题" class="headerlink" title="五级标题"></a>五级标题</h5><h6 id="六级标题"><a href="#六级标题" class="headerlink" title="六级标题"></a>六级标题</h6>
+        <p>记录一下做Sqli-Labs过程中学到的知识点，这次主要是双查询注入(Double Injection)的方法。　　　　　　　</p>
+<h2 id="Less-5"><a href="#Less-5" class="headerlink" title="Less-5"></a>Less-5</h2><p>尝试?id=1’显示错误信息<br><img src="/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/1'.jpg" alt><br>尝试?id=1’ –+正常<br><img src="/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/1'--+.jpg" alt><br>通过order by可以发现select得到的是3个字段<br><img src="/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/orderby.jpg" alt><br>由于正常情况下，select得到的结果不会显示在页面上，所以无法使用前几关union的方法，查阅相关教程，发现可以利用<code>count(*)</code>、<code>rand()</code>、<code>group by</code>三者组合使用是的bug通过报错信息来显示你真正想执行的SQL语句的结果。使用举例：<br><code>Select count(*),concat((你的注入语句),floor(rand(0)*2))a from information_schema.columns group by a</code><br>这里使用<code>database()</code>作为注入语句<br><img src="/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/success.jpg" alt><br>简单记录下这种方法的原理：首先，确定的随机种子在进行<code>rand()</code>时每次的结果都是一样的，比如<code>floor(rand(0)*2)</code>的结果序列总是0 1 1 0 1 1 …………其次<code>count(*)</code>、<code>rand()</code>、<code>group by</code>组合使用时，在一次查询中会触发多次<code>rand()</code>，致使插入阶段出现错误。<br>以<code>Select count(*),concat((你的注入语句),floor(rand(0)*2))a from information_schema.columns group by a</code>的情况举例，查到第一条数据是“数据库名0”，在插入结果临时表时触发BUG，再次执行<code>rand(0)</code>，结果插入了“数据库名1”，计数（count）1。下一条为“数据库名1”，发现临时表里有，直接计数+1，再下一条为“数据库名0”，临时表中没有需要插入，触发BUG再次执行<code>rand(0)</code>，此次<code>floor(rand(0)*2)</code>的结果为1,数据库想要插入“数据库名1”，却发现已经存在“数据库名1”，这一项在临时表中相当于主键所以误差插入重复的数据，因此报错。<br>最后，这个办法还是有一定局限性的，因为要求<code>count(*)</code>、<code>rand()</code>、<code>group by</code>联合使用，最少得有两列，并且被查询的表根据随机种子使用的不同至少也要有两条数据以上(假如序列为0 0 1 0)，使用rand(0)的话需要3条以上。</p>
+<h2 id="Less-6"><a href="#Less-6" class="headerlink" title="Less-6"></a>Less-6</h2><p>第六关把单引号闭合换成双引号闭合就可以了。此外我还看到一种使用<code>updatexml()</code>和<code>extractvalue()</code>的方法。前者正常的使用方法是<code>updatexml(目标xml文档，xml路径，更新的内容)</code>,其中xml路径的格式如果不对就会报错，我们可以在此处写入想用的SQL语句，将结果通过错误信息进行显示。比如在第六关使用<code>?id=1&quot; and updatexml(&#39;anything&#39;,concat(&#39;~&#39;,(select database())),&#39;anything&#39;) --+</code>。<br><img src="/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/xml.jpg" alt><br><code>extractvalue()</code>的利用方法大同小异，它的正常用法为<code>extractvalue(目标xml文档，xml路径)</code>,也是将SQL语句作为xml路径传入函数，通过报错信息得到结果。</p>
+<h2 id="Less-7"><a href="#Less-7" class="headerlink" title="Less-7"></a>Less-7</h2><p>这关作者主要想要考察使用outfile写入文件，但是由于这关的错误信息很不具体，我自己是没找到怎么闭合id，后来查到使用’))进行闭合，可能这部分确实需要不断地积累经验才能找到窍门。之后就可以使用形如<code>?id=-1&#39;)) union select 1,2,3 into outfile &#39;D:\\phpStudy\\PHPTutorial\\WWW\\test.txt&#39; --+</code>来写入文件。<br><img src="/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/outfile.jpg" alt><br>这里也可以写入一句话木马，然后基本就能用菜刀拿到WebShell。但是由于outfile的路径要受my.ini中的secure_file_priv条目控制，并不是特别简单就可以拿来用。</p>
+
       
     </div>
     
@@ -360,9 +370,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Hexo/" rel="tag"># Hexo</a>
-          
-            <a href="/tags/Markdown/" rel="tag"># Markdown</a>
+            <a href="/tags/Sqli/" rel="tag"># Sqli</a>
           
         </div>
       
@@ -470,7 +478,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">1</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -503,7 +511,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一级标题"><span class="nav-number">1.</span> <span class="nav-text">一级标题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#二级标题"><span class="nav-number">1.1.</span> <span class="nav-text">二级标题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#三级标题"><span class="nav-number">1.1.1.</span> <span class="nav-text">三级标题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#四级标题"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">四级标题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#五级标题"><span class="nav-number">1.1.1.1.1.</span> <span class="nav-text">五级标题</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#六级标题"><span class="nav-number">1.1.1.1.1.1.</span> <span class="nav-text">六级标题</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-5"><span class="nav-number">1.</span> <span class="nav-text">Less-5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-6"><span class="nav-number">2.</span> <span class="nav-text">Less-6</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-7"><span class="nav-number">3.</span> <span class="nav-text">Less-7</span></a></li></ol></div>
             
 
           </div>
