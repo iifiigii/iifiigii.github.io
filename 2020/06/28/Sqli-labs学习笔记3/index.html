@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Sqli,盲注," />
+  <meta name="keywords" content="Sqli," />
 
 
 
@@ -79,25 +79,34 @@
 
 
 
-<meta name="description" content="通过Sqli-Lab的8-10关学习下盲注的基本操作，主要是基于布尔的盲注和基于时间的盲注。记录一下常用的函数和指令，方便以后回来查。 Less-8第八关出题人的提示是使用基于布尔的盲注，简单测试可以看到，当查询语句正常时不会显示查询信息，报错时也不会显示错误信息。同时，id参数应该是在where后，当条件为真时页面会显示“ You are in………..”。条件为假时什么都不会显示，这个区别也就">
+<meta name="description" content="这回通过Sqli-labs学习更多类型的Sql注入漏洞。 Less-18当输入正确用户名和密码后，可以看到页面显示了Header中的User Agent信息。查看源码也证明，网页不仅显示了User Agent的信息，还使用Insert语句，将信息保存到数据库中。可以看到，User Agent信息是使用单引号闭合的。所以可以使用hackbar工具，构造User Agent为a&#39; and up">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Sqli-labs学习笔记2">
-<meta property="og:url" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/index.html">
+<meta property="og:title" content="Sqli-labs学习笔记3">
+<meta property="og:url" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/index.html">
 <meta property="og:site_name" content="Web低手的笔记本">
-<meta property="og:description" content="通过Sqli-Lab的8-10关学习下盲注的基本操作，主要是基于布尔的盲注和基于时间的盲注。记录一下常用的函数和指令，方便以后回来查。 Less-8第八关出题人的提示是使用基于布尔的盲注，简单测试可以看到，当查询语句正常时不会显示查询信息，报错时也不会显示错误信息。同时，id参数应该是在where后，当条件为真时页面会显示“ You are in………..”。条件为假时什么都不会显示，这个区别也就">
+<meta property="og:description" content="这回通过Sqli-labs学习更多类型的Sql注入漏洞。 Less-18当输入正确用户名和密码后，可以看到页面显示了Header中的User Agent信息。查看源码也证明，网页不仅显示了User Agent的信息，还使用Insert语句，将信息保存到数据库中。可以看到，User Agent信息是使用单引号闭合的。所以可以使用hackbar工具，构造User Agent为a&#39; and up">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/1.png">
-<meta property="og:image" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/2.png">
-<meta property="og:image" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/3.png">
-<meta property="og:image" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/4.png">
-<meta property="og:image" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/5.png">
-<meta property="article:published_time" content="2020-06-23T07:52:18.000Z">
-<meta property="article:modified_time" content="2020-06-24T03:13:55.750Z">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/1.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/2.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/3.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/4.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/5.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/6.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/7.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/8.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/9.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/10.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/11.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/12.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/13.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/14.png">
+<meta property="og:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/15.png">
+<meta property="article:published_time" content="2020-06-28T02:51:19.000Z">
+<meta property="article:modified_time" content="2020-06-29T09:09:45.776Z">
 <meta property="article:author" content="Cinder">
 <meta property="article:tag" content="Sqli">
-<meta property="article:tag" content="盲注">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/1.png">
+<meta name="twitter:image" content="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/1.jpg">
 
 
 
@@ -127,13 +136,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2020/06/23/Sqli-labs学习笔记2/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/06/28/Sqli-labs学习笔记3/"/>
 
 
 
 
 
-  <title>Sqli-labs学习笔记2 | Web低手的笔记本</title>
+  <title>Sqli-labs学习笔记3 | Web低手的笔记本</title>
   
 
 
@@ -260,7 +269,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Cinder">
@@ -277,7 +286,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Sqli-labs学习笔记2</h1>
+          <h1 class="post-title" itemprop="name headline">Sqli-labs学习笔记3</h1>
         
 
         <div class="post-meta">
@@ -289,8 +298,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-23T15:52:18+08:00">
-                2020-06-23
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-28T10:51:19+08:00">
+                2020-06-28
               </time>
             
 
@@ -349,11 +358,14 @@
       
 
       
-        <p>通过Sqli-Lab的8-10关学习下盲注的基本操作，主要是基于布尔的盲注和基于时间的盲注。记录一下常用的函数和指令，方便以后回来查。</p>
-<h2 id="Less-8"><a href="#Less-8" class="headerlink" title="Less-8"></a>Less-8</h2><p>第八关出题人的提示是使用基于布尔的盲注，简单测试可以看到，当查询语句正常时不会显示查询信息，报错时也不会显示错误信息。同时，id参数应该是在<code>where</code>后，当条件为真时页面会显示“ You are in………..”。<br><img src="/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/1.png" alt><br>条件为假时什么都不会显示，这个区别也就产生了基于布尔盲注的基础。<br><img src="/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/2.png" alt><br>比如可以使用<code>?id=1&#39;and (length(database()))&gt;某长度 --+</code>的语句，依照页面的不同反应来探测数据库名字的长度。<br>这里记录下可能用到的函数：<br><code>left(a,b)</code> 从左侧截取字符串a的前b位<br><code>substr(a,b,c)</code> 从b位置开始,截取字符串a的c长度<br><code>mid(a,b,c)</code> 从b位置开始,截取字符串a的c长度<br><code>length(a)</code> 返回字符串a的长度<br><code>Ascii(a)</code> 返回字符串a最左面字符的ASCII值<br><code>ord(a)</code>  返回字符串a最左面字符的ASCII值<br>实际使用过程中，手工操作的话，还应该结合二分法减少探测的次数，而如果使用一些脚本工具就方便得多。<br>使用sqlmap查看数据库名时，可以看到数据库名是在一个字符一个字符往出蹦，证明是在进行一个不断试探地过程。<br><img src="/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/3.png" alt><br>常用的Sqlmap命令：<br><code>-u</code> 后跟目标url常用于GET型<br><code>-r</code> 后跟BurpSuite导出文件，用于POST型<br><code>-dbms</code> 指定某种数据库<br><code>--is-dba</code> 查看当前用户权限<br><code>--current-db</code> 查看当前数据库<br><code>--current-user</code> 查看当前用户<br><code>--passwords</code> 查看数据库密码<br><code>-D 数据库名 -tables</code> 查看某数据中的表名<br><code>-D 数据库名 -T 表名 -columns</code> 查看某表的字段名<br><code>-D 数据库名 -T 表名 -C 字段名 –dump</code> 导出某表的指定字段数据  </p>
-<h2 id="Less-9"><a href="#Less-9" class="headerlink" title="Less-9"></a>Less-9</h2><p>第九关题目提示是基于延时的注入，经过简单尝试后，这一关不管我输入是对是错，能否查询出数据，页面都只显示“ You are in………..”，因此基于布尔注入也不好使了。看了一些介绍基于延时注入的讲解，感觉方法的设计还是很巧妙的。如果说基于布尔的方法是通过可见的“真|假”结果来探测数据库信息，那么基于延时的方法就是通过运行时间来判断<code>if</code>语句的“真|假”结果进而去探测数据库信息。还是以获取数据库名长度来举例子，在第九关就可以构造这样的攻击字符串。<br>?id=1’ and if(length(database())&gt;9,sleep(5),sleep(10)) –+<br>?id=1’ and if(length(database())&gt;1,sleep(5),sleep(10)) –+<br><img src="/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/4.png" alt>　　　　　　　　　　　　　　　　　<img src="/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/5.png" alt>　　</p>
-<p>可以看到页面响应的时间是不一样的，可以通过响应的时间判断前面语句的“真|假”结果。<br>顺便记录一下，我在测试时发现id=-1时无法触发后面的<code>if</code>语句。经查询，<code>where</code>后用<code>and</code>连接的条件如果先执行的条件为假，后面就不会继续执行了。换为<code>or</code>连接则会继续执行，但是会对数据库中每一条数据都执行一遍，这样就会造成超长的延时，是不可取的。<br>常用到的函数有这些：<br><code>if(a,b,c)</code> 如果a为真，返回b，否则返回c<br><code>sleep(n)</code> 停n秒<br><code>BENCHMARK(n,a)</code> 将a语句执行n遍<br><code>SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.tables C;</code><br>笛卡尔积，n-&gt;n^3，需要一段时间来执行</p>
-<h2 id="Less-10"><a href="#Less-10" class="headerlink" title="Less-10"></a>Less-10</h2><p>和第九关的区别是把单引号闭合改为用双引号。</p>
+        <p>这回通过Sqli-labs学习更多类型的Sql注入漏洞。</p>
+<h2 id="Less-18"><a href="#Less-18" class="headerlink" title="Less-18"></a>Less-18</h2><p>当输入正确用户名和密码后，可以看到页面显示了Header中的User Agent信息。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/1.jpg" alt><br>查看源码也证明，网页不仅显示了User Agent的信息，还使用Insert语句，将信息保存到数据库中。可以看到，User Agent信息是使用单引号闭合的。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/2.jpg" alt><br>所以可以使用hackbar工具，构造User Agent为<code>a&#39; and updatexml(1,concat(&#39;~&#39;,(select database())),1),1,1) #</code><br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/3.jpg" alt><br>这里有个小坑，由于最新的Firefox的hackbar是不能免费用的，我安装的是HackBar V2,因为不明原因，在post data中添加submit参数会使Execute键失效，改成Submit就可以正常用了，不知道为什么。</p>
+<h2 id="Less-19-amp-Less-20"><a href="#Less-19-amp-Less-20" class="headerlink" title="Less-19 &amp; Less-20"></a>Less-19 &amp; Less-20</h2><p>19、20关与18关大同小异，就是把User Agent改成Referer和Cookie。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/4.jpg" alt><br>如果使用sqlmap进行自动测试，还是配合Burp Suite比较方便。开启Burp截包功能，然后保存到文件。使用sqlmap的-r指令读取文件进行测试。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/5.jpg" alt><br> 当检测等级高于2级时，sqlmap会去检查Cookie中是否存在注入点。当检测等级高于3级时，检查header中是否存在注入点。</p>
+<h2 id="Less-23"><a href="#Less-23" class="headerlink" title="Less-23"></a>Less-23</h2><p>进入高级注入部分，又回到了熟悉的GET型请求。标题表示这道题会对注释进行过滤，所以先用<code>?id=1&#39; --+</code>和<code>?id=1&#39; #</code>试了试，发现只要使用了注释，传入的数据都会被过滤掉。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/6.jpg" alt><br>既然无法简单粗暴的把后面的内容注释掉，就又构造了<code>?id=1&#39; or &#39;1&#39;=&#39;1</code>这种能自己闭合的例子，发现可以。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/7.jpg" alt><br>因为这道题有错误显示，所以考虑怎么结合错误信息(updatexml或者extravalue这种)进行注入，构造了<code>id=1&#39; and updatexml(1,concat(0x7e,(SELECT database()),0x7e),1) and &#39;1&#39;=&#39;1</code>成功暴出了数据库信息。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/8.jpg" alt><br>又看了看网上别人的做法，发现这种会显示查询得到的信息的情况，可以直接使用union查询想得到的信息显示在页面上就行了。使用union的做法使用<code>id=1&#39; union select 1,2,3 and &#39;1&#39;=&#39;1</code>来试探有几项数据，这里union select和后面的and1=1到底怎么执行让我很迷惑。开了个mysql测试发现，运行顺序为<code>select 1,2,(3 and &#39;1&#39;=&#39;1)</code>。可以看到不加and 1=1时查出来1,2,3,加了以后查出来1,2,1。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/9.jpg" alt><br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/10.jpg" alt></p>
+<h2 id="Less-24"><a href="#Less-24" class="headerlink" title="Less-24"></a>Less-24</h2><p>24关是一个登录页面，成功登录后可以修改用户密码。首先尝试了万能密码<code>&#39; or 1=1 #</code>,发现行不通。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/11.jpg" alt><br>虽然登录页面不行，但是发现组册新用户时可以加入特殊字符如：’和#，所以注册一个用户名为<code>hack&#39; or 1=1 #</code>的用户，然后修改密码。由于修改密码的SQL语句的最后部分很可能是<code>where id=用户名 and passwd=旧密码</code>的格式，在对<code>hack&#39; or 1=1 #</code>用户进行密码修改时，不仅会绕过旧密码的验证，同时也绕过了对用户名的验证，可以将数据库中所有用户的密码全部修改。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/12.jpg" alt></p>
+<h2 id="Less-25——Less-28"><a href="#Less-25——Less-28" class="headerlink" title="Less-25——Less-28"></a>Less-25——Less-28</h2><p>25——28关是对一些常见的过滤方式进行总结。<br>第25关会过滤关键词or和and,尝试提交<code>?id=1&#39; or &#39;1&#39;=&#39;1</code>可以看到or会被过滤掉。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/13.png" alt><br>我能想到的方法有三种：符号绕过、双写绕过和大小写绕过。符号绕过最简单，or可以改为||,and可以改为&amp;&amp;。双写绕过是利用有些不严谨过滤器只会简单的把需过滤关键字删掉，如果输入<code>aandnd</code>,中间的and会被删掉，而前面的a和后面的nd就会组成and。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/14.png" alt><br>另一种方法是利用mysql很大可能是大小不敏感的，如果过滤器只是简单的枚举型黑名单机制，很有可能会考虑不周，存在使用大小写绕过的空间。  </p>
+<p>第26关会过滤掉空格和注释符号。尝试提交<code>?id=1 # -- /**/</code>，只剩下1了。可以使用各种特殊字符来当空格用(基本都需要Linux服务器)：<br>%09 TAB键（水平）<br>%0a 新建一行<br>%0c 新的一页<br>%0d return功能<br>%0b TAB键（垂直）<br>%a0 空格  </p>
+<p>第27关和28关是对Union和select关键字的过滤，唯一的区别一个是’闭合另一个是’)闭合，这里使用大小写绕过成功了。<br><img src="/2020/06/28/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/15.png" alt><br>最后，简单总结SQLi常用的绕过方式：<br>1.大小写绕过： select-&gt;sElEct<br>2.双写绕过：   and-&gt;aandnd<br>3.or、and绕过： and-&gt;&amp;&amp;<br>4.编码绕过：空格-&gt;%0a;test1-&gt;0x7465737431;<br>test-&gt;CHAR(116)+CHAR(101)+CHAR(115)+CHAR(116)<br>5.等号绕过: !=-&gt;&lt;&gt;<br>6.内联注释绕过：如果过滤函数会将多行注释的内容排除在外，可以使用/<em>!被过滤的关键字</em>/</p>
 
       
     </div>
@@ -373,8 +385,6 @@
           
             <a href="/tags/Sqli/" rel="tag"># Sqli</a>
           
-            <a href="/tags/%E7%9B%B2%E6%B3%A8/" rel="tag"># 盲注</a>
-          
         </div>
       
 
@@ -386,8 +396,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/" rel="next" title="Sqli-labs学习笔记1">
-                <i class="fa fa-chevron-left"></i> Sqli-labs学习笔记1
+              <a href="/2020/06/27/cookie-jar/" rel="next" title="Who Left Open the Cookie Jar? A Comprehensive Evaluation of Third-Party Cookie Policies">
+                <i class="fa fa-chevron-left"></i> Who Left Open the Cookie Jar? A Comprehensive Evaluation of Third-Party Cookie Policies
               </a>
             
           </div>
@@ -395,10 +405,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/06/24/%E8%8B%B1%E6%96%87%E5%AD%A6%E6%9C%AF%E5%86%99%E4%BD%9C%E7%AC%94%E8%AE%B0Unit0-1/" rel="prev" title="英文学术写作笔记Unit0-1">
-                英文学术写作笔记Unit0-1 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -534,7 +540,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-8"><span class="nav-number">1.</span> <span class="nav-text">Less-8</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-9"><span class="nav-number">2.</span> <span class="nav-text">Less-9</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-10"><span class="nav-number">3.</span> <span class="nav-text">Less-10</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-18"><span class="nav-number">1.</span> <span class="nav-text">Less-18</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-19-amp-Less-20"><span class="nav-number">2.</span> <span class="nav-text">Less-19 &amp; Less-20</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-23"><span class="nav-number">3.</span> <span class="nav-text">Less-23</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-24"><span class="nav-number">4.</span> <span class="nav-text">Less-24</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-25——Less-28"><span class="nav-number">5.</span> <span class="nav-text">Less-25——Less-28</span></a></li></ol></div>
             
 
           </div>
