@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="MongoDB," />
 
 
 
@@ -79,13 +79,20 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Web低手的笔记本">
-<meta property="og:url" content="http://yoursite.com/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta name="description" content="这次对老项目的学习的主要任务之一是添加一些操作记录，可以直接从数据库下手，所以记录一下Mongodb的基本操作。 MongoDB是一种非关系型数据库，采用的是键值对的方式存储数据。在处理非结构化&#x2F;半结构化的大数据、水平方向上进行扩展或者应对动态增加的数据项时可以优先考虑使用NoSQL数据库。MongoDB 的逻辑结构是一种层次结构。主要由：文档(document)、集合(collection)、数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB使用笔记">
+<meta property="og:url" content="http://yoursite.com/2021/03/28/Mongo-Use/index.html">
 <meta property="og:site_name" content="Web低手的笔记本">
+<meta property="og:description" content="这次对老项目的学习的主要任务之一是添加一些操作记录，可以直接从数据库下手，所以记录一下Mongodb的基本操作。 MongoDB是一种非关系型数据库，采用的是键值对的方式存储数据。在处理非结构化&#x2F;半结构化的大数据、水平方向上进行扩展或者应对动态增加的数据项时可以优先考虑使用NoSQL数据库。MongoDB 的逻辑结构是一种层次结构。主要由：文档(document)、集合(collection)、数">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2021/03/28/Mongo-Use/1.png">
+<meta property="article:published_time" content="2021-03-28T02:36:57.000Z">
+<meta property="article:modified_time" content="2021-03-28T02:36:53.553Z">
 <meta property="article:author" content="Cinder">
+<meta property="article:tag" content="MongoDB">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2021/03/28/Mongo-Use/1.png">
 
 
 
@@ -115,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/categories/学习笔记/"/>
+  <link rel="canonical" href="http://yoursite.com/2021/03/28/Mongo-Use/"/>
 
 
 
 
 
-  <title>分类: 学习笔记 | Web低手的笔记本</title>
+  <title>MongoDB使用笔记 | Web低手的笔记本</title>
   
 
 
@@ -140,7 +147,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -234,311 +241,193 @@
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block category">
-
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>学习笔记<small>分类</small>
-        </h1>
-      </div>
-
-      
-        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/28/Mongo-Use/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cinder">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jfif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Web低手的笔记本">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2020/07/16/RNN3/" itemprop="url">
-              
-                <span itemprop="name">RNN网络识别Sysmon恶意事件(3)</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">MongoDB使用笔记</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-07-16T21:32:37+08:00"
-              content="2020-07-16" >
-          07-16
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-28T10:36:57+08:00">
+                2021-03-28
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%90%8E%E7%AB%AF%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">后端笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2020/07/10/%E8%8B%B1%E6%96%87%E5%AD%A6%E6%9C%AF%E5%86%99%E4%BD%9C%E7%AC%94%E8%AE%B0Unit3/" itemprop="url">
-              
-                <span itemprop="name">英文学术写作笔记Unit3</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-07-10T20:39:48+08:00"
-              content="2020-07-10" >
-          07-10
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
 
       
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2020/07/10/RNN2/" itemprop="url">
-              
-                <span itemprop="name">RNN网络识别Sysmon恶意事件(2)</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-07-10T16:27:19+08:00"
-              content="2020-07-10" >
-          07-10
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2020/07/09/RNN/" itemprop="url">
-              
-                <span itemprop="name">RNN网络识别Sysmon恶意事件(1)</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-07-09T16:51:22+08:00"
-              content="2020-07-09" >
-          07-09
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2020/06/30/T-Star/" itemprop="url">
-              
-                <span itemprop="name">T-Star高校挑战赛——靶场赛writeup</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-06-30T21:41:40+08:00"
-              content="2020-06-30" >
-          06-30
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2020/06/29/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/" itemprop="url">
-              
-                <span itemprop="name">Sqli-labs学习笔记3</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-06-29T16:51:19+08:00"
-              content="2020-06-29" >
-          06-29
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2020/06/27/cookie-jar/" itemprop="url">
-              
-                <span itemprop="name">Who Left Open the Cookie Jar? A Comprehensive Evaluation of Third-Party Cookie Policies</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-06-27T11:04:56+08:00"
-              content="2020-06-27" >
-          06-27
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2020/06/25/%E8%8B%B1%E6%96%87%E5%AD%A6%E6%9C%AF%E5%86%99%E4%BD%9C%E7%AC%94%E8%AE%B0Unit2/" itemprop="url">
-              
-                <span itemprop="name">英文学术写作笔记Unit2</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-06-25T16:15:46+08:00"
-              content="2020-06-25" >
-          06-25
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2020/06/24/%E8%8B%B1%E6%96%87%E5%AD%A6%E6%9C%AF%E5%86%99%E4%BD%9C%E7%AC%94%E8%AE%B0Unit0-1/" itemprop="url">
-              
-                <span itemprop="name">英文学术写作笔记Unit0-1</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-06-24T10:27:50+08:00"
-              content="2020-06-24" >
-          06-24
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-      
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/" itemprop="url">
-              
-                <span itemprop="name">Sqli-labs学习笔记2</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2020-06-23T15:52:18+08:00"
-              content="2020-06-23" >
-          06-23
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+        <p>这次对老项目的学习的主要任务之一是添加一些操作记录，可以直接从数据库下手，所以记录一下Mongodb的基本操作。</p>
+<p>MongoDB是一种非关系型数据库，采用的是键值对的方式存储数据。在处理非结构化/半结构化的大数据、水平方向上进行扩展或者应对动态增加的数据项时可以优先考虑使用NoSQL数据库。MongoDB 的逻辑结构是一种层次结构。主要由：文档(document)、集合(collection)、数据库(database)这三部分组成的。与关系型数据库相比，其对照关系如下表所示。<br><img src="/2021/03/28/Mongo-Use/1.png" alt>  </p>
+<p>在命令行，常用的命令：</p>
+<ul>
+<li><code>mongo</code>:直接登录本地的MongoDB。</li>
+<li><code>mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]</code>:使用用户名登录MongoDB(远程数据库及复制集)</li>
+<li><code>db.auth(username,password)</code>:登录数据库</li>
+<li><code>show dbs</code>:查看所有数据库</li>
+<li><code>show collections</code>:查看所有集合</li>
+<li><code>use xxx</code>:进入某个数据库</li>
+<li><code>db.stats()</code>:查看数据库状态</li>
+<li><code>db.xxx.stats()</code>:查看某集合状态</li>
+<li><code>db.getCollectionNames()</code>:查看数据库由哪些集合</li>
+<li><code>db.help()</code>:查看数据库有哪些操作</li>
+<li><code>db.xxx.help()</code>:查看集合xxx有哪些操作</li>
+<li><code>db.xxx.find({}).pretty()</code>:在xxx集合中查询数据，大括号里是查询条件,pretty()以格式化的形式输出</li>
+</ul>
+<p>至于更加复杂的增删改查，可以使用pymongo写脚本完成。对于本次任务，连接服务器让后插入文档即可。写好插入条目发现前端不会自动按时间排序，还要给集合中文档按时间顺序排个序，使用到的命令暂时有：</p>
+<ul>
+<li><code>client = pymongo.MongoClient(hostname,port)</code>:连接MongoDB</li>
+<li><code>db = client[database]</code>:选择需要使用的数据库</li>
+<li><code>db.authentioate(username,password)</code>:通过用户名、密码进行身份认证</li>
+<li><code>db.xxx.insert_one</code>:向xxx集合插入一条数据</li>
+<li><code>db.xxx.find().sort(&#39;a.b&#39;:1)</code>:xxx集合的查询结果进行排序，可以实现千套结构的数据查询，1表示升序，-1表示降序</li>
+</ul>
 
       
     </div>
+    
+    
+    
 
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/26/Nginx-Conf/" rel="next" title="Nginx配置笔记">
+                <i class="fa fa-chevron-left"></i> Nginx配置笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/page/2/">2</a><a class="extend next" rel="next" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/page/2/">&gt;</a>
-  </nav>
+  </article>
 
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -546,6 +435,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -759,6 +652,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
