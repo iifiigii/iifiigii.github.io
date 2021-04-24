@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="深度学习,数据处理," />
+  <meta name="keywords" content="Golang,后端,Mongo," />
 
 
 
@@ -79,24 +79,20 @@
 
 
 
-<meta name="description" content="上次做完作者提供的模型，这次跑一下结果，然后看看如何针对存在的问题进一步优化。先是用作者说的效果较好的卷积+LSTM模型，训练集和测试集得到的结果指标如下：loss: 0.0774 - tp: 16.0000 - fp: 1.0000 - tn: 47.0000 - fn: 0.0000e+00 - precision: 0.9412 - recall: 1.0000 - auc: 0.9961">
+<meta name="description" content="学一下学Mongo的进阶操作，和Golang平台七牛云最新的mongo操作库qmgo。 $操作符mongo很多高级操作需要使用$操作符，可以分为几类：  比较操作符     操作符 描述 示例    $eq 等于 { field: { $eq: value }}   $gt(e) 大于(大于等于) {field: {$gte: value}}   $in 匹配数组中的任一值 {field: { $">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RNN网络识别Sysmon恶意事件(3)">
-<meta property="og:url" content="http://yoursite.com/2020/07/16/RNN3/index.html">
+<meta property="og:title" content="Mongo进阶操作与qmgo">
+<meta property="og:url" content="http://yoursite.com/2021/04/24/Mongo2-Qmgo/index.html">
 <meta property="og:site_name" content="Web低手的笔记本">
-<meta property="og:description" content="上次做完作者提供的模型，这次跑一下结果，然后看看如何针对存在的问题进一步优化。先是用作者说的效果较好的卷积+LSTM模型，训练集和测试集得到的结果指标如下：loss: 0.0774 - tp: 16.0000 - fp: 1.0000 - tn: 47.0000 - fn: 0.0000e+00 - precision: 0.9412 - recall: 1.0000 - auc: 0.9961">
+<meta property="og:description" content="学一下学Mongo的进阶操作，和Golang平台七牛云最新的mongo操作库qmgo。 $操作符mongo很多高级操作需要使用$操作符，可以分为几类：  比较操作符     操作符 描述 示例    $eq 等于 { field: { $eq: value }}   $gt(e) 大于(大于等于) {field: {$gte: value}}   $in 匹配数组中的任一值 {field: { $">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yoursite.com/2020/07/16/RNN3/1.png">
-<meta property="og:image" content="http://yoursite.com/2020/07/16/RNN3/2.svg">
-<meta property="og:image" content="http://yoursite.com/2020/07/16/RNN3/3.png">
-<meta property="og:image" content="http://yoursite.com/2020/07/16/RNN3/4.png">
-<meta property="article:published_time" content="2020-07-16T13:32:37.000Z">
-<meta property="article:modified_time" content="2020-07-16T13:32:37.890Z">
+<meta property="article:published_time" content="2021-04-24T10:09:56.000Z">
+<meta property="article:modified_time" content="2021-04-24T10:09:56.863Z">
 <meta property="article:author" content="Cinder">
-<meta property="article:tag" content="深度学习">
-<meta property="article:tag" content="数据处理">
+<meta property="article:tag" content="Golang">
+<meta property="article:tag" content="后端">
+<meta property="article:tag" content="Mongo">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2020/07/16/RNN3/1.png">
 
 
 
@@ -126,13 +122,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2020/07/16/RNN3/"/>
+  <link rel="canonical" href="http://yoursite.com/2021/04/24/Mongo2-Qmgo/"/>
 
 
 
 
 
-  <title>RNN网络识别Sysmon恶意事件(3) | Web低手的笔记本</title>
+  <title>Mongo进阶操作与qmgo | Web低手的笔记本</title>
   
 
 
@@ -259,7 +255,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/16/RNN3/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/04/24/Mongo2-Qmgo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Cinder">
@@ -276,7 +272,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">RNN网络识别Sysmon恶意事件(3)</h1>
+          <h1 class="post-title" itemprop="name headline">Mongo进阶操作与qmgo</h1>
         
 
         <div class="post-meta">
@@ -288,8 +284,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-16T21:32:37+08:00">
-                2020-07-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-04-24T18:09:56+08:00">
+                2021-04-24
               </time>
             
 
@@ -348,20 +344,226 @@
       
 
       
-        <p>上次做完作者提供的模型，这次跑一下结果，然后看看如何针对存在的问题进一步优化。<br>先是用作者说的效果较好的卷积+LSTM模型，训练集和测试集得到的结果指标如下：<br><code>loss: 0.0774 - tp: 16.0000 - fp: 1.0000 - tn: 47.0000 - fn: 0.0000e+00 - precision: 0.9412 - recall: 1.0000 - auc: 0.9961 - accuracy: 0.0000e+00 -</code>  </p>
-<p><code>val_loss: 0.3431 - val_tp: 3.0000 - val_fp: 2.0000 - val_tn: 11.0000 - val_fn: 0.0000e+00 - val_precision: 0.6000 - val_recall: 1.0000 - val_auc: 1.0000 - val_accuracy: 0.0000e+00</code></p>
-<p>常规训练规律如下：</p>
-<p>loss下降，val_loss下降：这是最好的情况，表示训练网络正常。</p>
-<p>loss下降，val_loss稳定：网络可能出现了过拟合，可以使用Max pooling和正则化。</p>
-<p>loss稳定，val_loss下降：数据集问题。</p>
-<p>loss稳定，val_loss稳定：学习过程遇到瓶颈，可以减少学习率或批量数目。</p>
-<p>loss上升，val_loss上升：网络结构设计问题，训练超参数设置不当，数据集经过清洗等问题。<br><img src="/2020/07/16/RNN3/1.png" alt><br>loss曲线一直在震荡，并且val_loss还上升了，需要修改。</p>
-<h2 id="Adam学习率衰减"><a href="#Adam学习率衰减" class="headerlink" title="Adam学习率衰减"></a>Adam学习率衰减</h2><p>使用学习率衰减功能使训练后期的学习率快速下降，加快收敛，其公式为：<br><img src="/2020/07/16/RNN3/2.svg" alt><br>使用0.01的初始学习率辅以0.01的衰减率，其损失函数图如下：<br><img src="/2020/07/16/RNN3/3.png" alt><br>可以发现蓝线最终结果非常好，怀疑是valid)data使用了测试集数据，但是按理说valid_data不应该参与模型权重的学习,删除valid_data重新跑了一遍，发现loss小了很多，但是测试结果变差了，出现了过拟合。<br><img src="/2020/07/16/RNN3/4.png" alt><br>感觉valid_data还是通过某种途径影响到了模型的学习，需要查一下资料。Keras的作者谈到即使模型没有直接针对valid_data进行训练，但是由于慢慢将信息泄露给模型，仍然会导致过拟合，所以valid_data应该从train_data中划分，而不能使用test_data。但是valid_data应该参与的是手动调参环节，不应该对model.fit()的结果起作用。</p>
-<h2 id="k折交叉验证法"><a href="#k折交叉验证法" class="headerlink" title="k折交叉验证法"></a>k折交叉验证法</h2><p>将原始数据分成K组，将每个子集数据分别做一次验证集，其余的K-1组子集数据作为训练集，训练得到K个模型。将这K个模型进行结果评估，最后的误差加和取平均就得到交叉验证误差。交叉验证有效利用了有限的数据，并且评估结果能够尽可能接近模型在测试集上的表现，可以做为模型优化的指标使用。</p>
-<p>实际使用中，可以使用sklearn的StratifiedKFold自动切割数据,for循环中的train，test是分别被分到的测试集和训练集的索引号。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#k折交叉验证</span></span><br><span class="line">kfold = StratifiedKFold(n_splits=<span class="number">10</span>, shuffle=<span class="literal">True</span>, random_state=<span class="number">7</span>)</span><br><span class="line">cvscores = []</span><br><span class="line"><span class="keyword">for</span> train, test <span class="keyword">in</span> kfold.split(X, y):</span><br><span class="line">    print(train)</span><br><span class="line">    print(test)</span><br><span class="line">    <span class="comment">#测试集和训练集用X[train]，X[test]调用</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>这个实验准备就到此结束了，由于数据量太小，感觉死磕调参得到的经验没有什么指导意义。之后准备尝试做个用RNN网络做twitter分类的实验，为之后的实际任务做准备。</p>
+        <p>学一下学Mongo的进阶操作，和Golang平台七牛云最新的mongo操作库qmgo。</p>
+<h2 id="操作符"><a href="#操作符" class="headerlink" title="$操作符"></a>$操作符</h2><p>mongo很多高级操作需要使用$操作符，可以分为几类：</p>
+<ul>
+<li>比较操作符</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">操作符</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">$eq</td>
+<td align="left">等于</td>
+<td align="left">{ field: { $eq: value }}</td>
+</tr>
+<tr>
+<td align="left">$gt(e)</td>
+<td align="left">大于(大于等于)</td>
+<td align="left">{field: {$gte: value}}</td>
+</tr>
+<tr>
+<td align="left">$in</td>
+<td align="left">匹配数组中的任一值</td>
+<td align="left">{field: { $in: [&lt;value1&gt;, &lt;value2&gt;, … &lt;valueN&gt;]}}</td>
+</tr>
+</tbody></table>
+<ul>
+<li>逻辑操作符</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">操作符</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">$or</td>
+<td align="left">或条件查询</td>
+<td align="left">{ $or: [ { &lt;expression1&gt; }, { &lt;expression2&gt; }, … , { &lt;expressionN&gt; } ] }</td>
+</tr>
+<tr>
+<td align="left">$not</td>
+<td align="left">查询与表达式不匹配的文档</td>
+<td align="left">{ field: { $not: { &lt;operator-expression&gt; } } }</td>
+</tr>
+<tr>
+<td align="left">$nor</td>
+<td align="left">查询与任一表达式都不匹配的文档</td>
+<td align="left">{ $nor: [ { &lt;expression1&gt; }, { &lt;expression2&gt; }, … { &lt;expressionN&gt; } ] }</td>
+</tr>
+</tbody></table>
+<ul>
+<li>元素操作符</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">操作符</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">$exist</td>
+<td align="left">查询存在指定字段的文档</td>
+<td align="left">{ field: { $exists: &lt;boolean&gt; } }</td>
+</tr>
+<tr>
+<td align="left">$type</td>
+<td align="left">查询类型为指定类型的文档</td>
+<td align="left">{ field: { $type: &lt;BSON type number&gt;</td>
+</tr>
+</tbody></table>
+<ul>
+<li>评估操作符</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">操作符</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">$mod</td>
+<td align="left">取余条件查询</td>
+<td align="left">{ field: { $mod: [ 除数, 余数 ] } }</td>
+</tr>
+<tr>
+<td align="left">$regex</td>
+<td align="left">正则表达式查询</td>
+<td align="left">{ &lt;field&gt;: { $regex: ‘pattern’, $options: ‘&lt;options&gt;’ } }</td>
+</tr>
+<tr>
+<td align="left">$text</td>
+<td align="left">文本索引查询</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">$where</td>
+<td align="left">在查询系统中执行JS函数或JS表达式</td>
+<td align="left">db.myCollection.find( { $where: “this.credits == this.debits” } );</td>
+</tr>
+</tbody></table>
+<ul>
+<li>数组操作符</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">操作符</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">$all</td>
+<td align="left">匹配文档的数组字段中包含所有指定元素的文档</td>
+<td align="left">{ &lt; field &gt;： { $ all ： [ &lt; value1 &gt; ， &lt; value2 &gt; … ] } }</td>
+</tr>
+<tr>
+<td align="left">$elemMatch</td>
+<td align="left">匹配内嵌文档或数组中的部分field(存在任意一个元素满足所有query)</td>
+<td align="left">{ &lt;field&gt;: { $elemMatch: { &lt;query1&gt;, &lt;query2&gt;, … } } }</td>
+</tr>
+<tr>
+<td align="left">$size</td>
+<td align="left">匹配数组长度为指定大小的文档</td>
+<td align="left">{ field: { $size: &lt;number&gt; }</td>
+</tr>
+</tbody></table>
+<p>以上是对查询操作的多种操作符，下面记录一下针对更新操作的操作符：</p>
+<ul>
+<li>字段更新</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">操作符</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">$inc</td>
+<td align="left">将文档中的某个field对应的value自增/减某个数字amount</td>
+<td align="left">{ $inc: { &lt;field1&gt;: &lt;amount1&gt;, &lt;field2&gt;: &lt;amount2&gt;, … } }</td>
+</tr>
+<tr>
+<td align="left">$rename</td>
+<td align="left">字段重命名</td>
+<td align="left">{$rename: { &lt;field1&gt;: &lt;newName1&gt;, &lt;field2&gt;: &lt;newName2&gt;, … } }</td>
+</tr>
+<tr>
+<td align="left">$setOnInsert</td>
+<td align="left">配合upsert操作，在作为insert时可以为新文档扩展更多的field</td>
+<td align="left">{ $setOnInsert: { &lt;field1&gt;: &lt;value1&gt;, … } }, { upsert: true })</td>
+</tr>
+<tr>
+<td align="left">$set</td>
+<td align="left">更新文档中的某一个字段，而不是全部替换</td>
+<td align="left">{ $set: { &lt;field1&gt;: &lt;value1&gt;, … } }</td>
+</tr>
+</tbody></table>
+<ul>
+<li>数组更新</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">操作符</th>
+<th align="left">描述</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">$addToSet</td>
+<td align="left">用于添加一个元素到array中，一般用于update</td>
+<td align="left">{ $ addToSet ： { &lt; field1 &gt;： &lt; value1 &gt; ， … } }</td>
+</tr>
+<tr>
+<td align="left">$push</td>
+<td align="left">往数组中追加指定的元素，若文档中数组不存在，则创建并添加指定元素</td>
+<td align="left">{ $push: { &lt;field1&gt;: &lt;value1&gt;, … } }</td>
+</tr>
+<tr>
+<td align="left">$each</td>
+<td align="left">搭配push或addToSet插入多个元素</td>
+<td align="left">{ $push: { &lt;field&gt;: { $each: [ &lt;value1&gt;, &lt;value2&gt; … ] } } }</td>
+</tr>
+<tr>
+<td align="left">$sort</td>
+<td align="left">指定顺序插入</td>
+<td align="left">{&lt;field&gt;: {$each: [ &lt;value1&gt;, &lt;value2&gt;, … ], $sort: &lt;sort specification&gt;}}</td>
+</tr>
+<tr>
+<td align="left">$position</td>
+<td align="left">指定位置插入</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<h2 id="qmgo"><a href="#qmgo" class="headerlink" title="qmgo"></a>qmgo</h2><p>由于<code>mgo</code>库在三年前停止维护，官方库不易使用等原因，因此七牛云开发了<code>Qmgo</code>。 <code>Qmgo</code> 是一款<code>Go</code>语言的<code>MongoDB driver</code>，基于MongoDB官方驱动开发实现，同时使用更易用的接口设计，很像<code>mgo</code>并且适用新版本MongoDB的各种新特性，虽然学习资料少一些，但是为了未来能用得长久些，还是选择使用<code>Qmgo</code>。</p>
+<p>支持的功能有：</p>
+<ul>
+<li>文档的增删改查, 均支持官方driver支持的所有options</li>
+<li><code>Sort</code>、<code>limit</code>、<code>count</code>、<code>select</code>、<code>distinct</code></li>
+<li>事务</li>
+<li><code>Hooks</code></li>
+<li>自动化更新的默认和定制fields</li>
+<li>预定义操作符</li>
+<li>聚合<code>Aggregate</code>、索引操作、<code>cursor</code></li>
+<li><code>validation tags</code> 基于tag的字段验证</li>
+<li>可自定义插件化编程</li>
+</ul>
 
       
     </div>
@@ -379,9 +581,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+            <a href="/tags/Golang/" rel="tag"># Golang</a>
           
-            <a href="/tags/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/" rel="tag"># 数据处理</a>
+            <a href="/tags/%E5%90%8E%E7%AB%AF/" rel="tag"># 后端</a>
+          
+            <a href="/tags/Mongo/" rel="tag"># Mongo</a>
           
         </div>
       
@@ -394,8 +598,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/07/10/%E8%8B%B1%E6%96%87%E5%AD%A6%E6%9C%AF%E5%86%99%E4%BD%9C%E7%AC%94%E8%AE%B0Unit3/" rel="next" title="英文学术写作笔记Unit3">
-                <i class="fa fa-chevron-left"></i> 英文学术写作笔记Unit3
+              <a href="/2021/04/16/Gin1/" rel="next" title="Gin搭建笔记">
+                <i class="fa fa-chevron-left"></i> Gin搭建笔记
               </a>
             
           </div>
@@ -403,10 +607,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2021/02/17/SourceFinder/" rel="prev" title="从GitHub公开存储库中查找恶意软件源代码">
-                从GitHub公开存储库中查找恶意软件源代码 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -540,7 +740,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Adam学习率衰减"><span class="nav-number">1.</span> <span class="nav-text">Adam学习率衰减</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#k折交叉验证法"><span class="nav-number">2.</span> <span class="nav-text">k折交叉验证法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">3.</span> <span class="nav-text">结语</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#操作符"><span class="nav-number">1.</span> <span class="nav-text">$操作符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#qmgo"><span class="nav-number">2.</span> <span class="nav-text">qmgo</span></a></li></ol></div>
             
 
           </div>
