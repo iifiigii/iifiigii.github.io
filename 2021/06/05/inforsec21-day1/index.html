@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="网络安全,代码嵌入," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="为促进网络空间安全研究的学术交流，了解国际网络空间安全最新学术动态，网络安全研究国际学术论坛（InForSec）于2021年6月5~6日（周六日）在北京举办“网络空间安全国际学术研究交流会（上）”。本次学术活动主题为“网络和系统安全”，分享学者们研究过程中的灵感、经验和体会。本次有幸能到现场聆听会议，第一天的内容主要为顶会论文分享。 Session 1: 软件系统安全Learning an Ass">
+<meta property="og:type" content="article">
+<meta property="og:title" content="InForSec2021会议小计——DAY1">
+<meta property="og:url" content="http://yoursite.com/2021/06/05/inforsec21-day1/index.html">
+<meta property="og:site_name" content="Web低手的笔记本">
+<meta property="og:description" content="为促进网络空间安全研究的学术交流，了解国际网络空间安全最新学术动态，网络安全研究国际学术论坛（InForSec）于2021年6月5~6日（周六日）在北京举办“网络空间安全国际学术研究交流会（上）”。本次学术活动主题为“网络和系统安全”，分享学者们研究过程中的灵感、经验和体会。本次有幸能到现场聆听会议，第一天的内容主要为顶会论文分享。 Session 1: 软件系统安全Learning an Ass">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://static01.imgkr.com/temp/7850374503d9456da81bbea1b222c99f.jpg">
+<meta property="og:image" content="https://static01.imgkr.com/temp/094b34be9edc4d30a4cbe8b7df9f8702.jpg">
+<meta property="og:image" content="https://static01.imgkr.com/temp/aa2ae8cca2554708a8eee6dbf30552b3.jpg">
+<meta property="og:image" content="https://static01.imgkr.com/temp/1a5f8ddc6e924e6091d06ad6c07679a0.jpg">
+<meta property="og:image" content="https://static01.imgkr.com/temp/7a1389d9119a4d399ecd593fda886fbf.jpg">
+<meta property="og:image" content="https://static01.imgkr.com/temp/a353f72cedb3419d9a1a339817ced9fe.jpg">
+<meta property="og:image" content="https://static01.imgkr.com/temp/b05f8d47cd7f4cc1a15591952e73a651.jpg">
+<meta property="og:image" content="https://static01.imgkr.com/temp/7f7fbf353db54fc7b5530f7a71325c0a.jpg">
+<meta property="og:image" content="https://static01.imgkr.com/temp/4be5e586a83e47a496fb3f3318234b04.jpg">
+<meta property="article:published_time" content="2021-06-05T13:11:51.000Z">
+<meta property="article:modified_time" content="2021-06-05T13:11:52.006Z">
+<meta property="article:author" content="Cinder">
+<meta property="article:tag" content="网络安全">
+<meta property="article:tag" content="代码嵌入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://static01.imgkr.com/temp/7850374503d9456da81bbea1b222c99f.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/06/05/inforsec21-day1/"/>
+
+
+
+
+
+  <title>InForSec2021会议小计——DAY1 | Web低手的笔记本</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Web低手的笔记本</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/06/05/inforsec21-day1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cinder">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jfif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Web低手的笔记本">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">InForSec2021会议小计——DAY1</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-05T21:11:51+08:00">
+                2021-06-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">论文笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>为促进网络空间安全研究的学术交流，了解国际网络空间安全最新学术动态，网络安全研究国际学术论坛（InForSec）于2021年6月5~6日（周六日）在北京举办“网络空间安全国际学术研究交流会（上）”。本次学术活动主题为“网络和系统安全”，分享学者们研究过程中的灵感、经验和体会。本次有幸能到现场聆听会议，第一天的内容主要为顶会论文分享。</p>
+<h3 id="Session-1-软件系统安全"><a href="#Session-1-软件系统安全" class="headerlink" title="Session 1: 软件系统安全"></a>Session 1: 软件系统安全</h3><h4 id="Learning-an-Assembly-Language-Model-for-Instruction-Embedding"><a href="#Learning-an-Assembly-Language-Model-for-Instruction-Embedding" class="headerlink" title="Learning an Assembly Language Model for Instruction Embedding"></a>Learning an Assembly Language Model for Instruction Embedding</h4><p>随着近年来对深度学习技术在安全领域应用研究的深入，其在许多包括函数边界检测、二进制代码相似性检测、函数原型推理等二进制分析任务中表现出一定优势。在二进制分析任务应用深度学习技术时，需要将考虑以何种形式将原始的二进制代码输入到神经网络中，在多种已有方案中，代码嵌入是现有较好的方法。汇编代码的嵌入，按照作者的话讲，即以一个固定长度的向量表示指令。现有的方法主要基于word2vec/doc2vec等技术，其优势在于能够避免人工选取特征、在一定程度上能提取出高层次语义特征；其不足在于无法表示复杂的指令格式（例如Asm2Vec只考虑一个操作和至多两个操作数）、程序上下文受噪声影响（依赖控制流图，受编译器优化影响大）。因此，针对现有技术存在的问题，作者提出PalmTree(Pre-trained Assembly Language Model for InsTRuction<br>EmbEdding),基于BERT模型，并提出多种自定义训练任务，对汇编代码嵌入技术做出改进。</p>
+<p><img src="https://static01.imgkr.com/temp/7850374503d9456da81bbea1b222c99f.jpg" alt></p>
+<p>PalmTree主要分为三部分：指令对取样，Token化，模型训练。</p>
+<p>1.指令对取样</p>
+<p>使用原始汇编代码、控制流图、数据流图抽取其中的控制关系和def-use关系的指令对。</p>
+<p>2.Token化</p>
+<p>PalmTree通过将每条指令都视为句子的方法，细粒度地将汇编代码进行Token化。针对指令中出现字符串和数字常量等OOV(Out-Of-Vocabulary)问题，PalmTree以统一的Token（[str]、[addr]）进行替换。特殊到，对于相对较小的常数（少于四位十六进制数），很可能表示的不是一个内存地址，而是重要的局部变量，因此保留其原值，并使用ONE-HOT编码进行Token化。</p>
+<p><img src="https://static01.imgkr.com/temp/094b34be9edc4d30a4cbe8b7df9f8702.jpg" alt></p>
+<p>3.模型训练</p>
+<p>PalmTree基于BERT模型，本文主要介绍了三项训练任务：Masked Language Model(MLM)、Context Window Prediction(CWP)、Def-Use Prediction(DUP)</p>
+<ul>
+<li>MLM是BERT模型训练中通用的任务，选取15%token进行替换、遮盖，然后让模型去预测这些Token的真实值。</li>
+</ul>
+<p><img src="https://static01.imgkr.com/temp/aa2ae8cca2554708a8eee6dbf30552b3.jpg" alt></p>
+<ul>
+<li>由于控制流不像自然语言一样具有相对严格依赖和顺序要求，所以并没有选择BERT提出的Next Sentence Prediction(NSP)任务，而是定义了一个包含目标指令前后数条指令的上下文窗口，训练模型预测输入的指令对是否在一个上下文窗口内，从而使模型能够理解汇编代码中的控制流信息。</li>
+</ul>
+<p><img src="https://static01.imgkr.com/temp/1a5f8ddc6e924e6091d06ad6c07679a0.jpg" alt></p>
+<ul>
+<li>相似地，为了让模型学习数据依赖信息，PalmTree设计DUP任务训练模型，将从数据流图中提取的指令对随机进行前后顺序翻转，训练模型去预测输入的指令对是否被翻转过。</li>
+</ul>
+<p><img src="https://static01.imgkr.com/temp/7a1389d9119a4d399ecd593fda886fbf.jpg" alt></p>
+<p>作者表示PalmTree可以直接用于生成汇编代码嵌入向量，在算力足够的情况下，也可以选择对模型进行fine-tuning。在评估阶段，该预训练模型取得很好的效果，并在多个下游任务（代码相似性检测，函数原型推测）的应用中都强于参考文献中的方法。</p>
+<h3 id="Session-2-网络安全"><a href="#Session-2-网络安全" class="headerlink" title="Session 2: 网络安全"></a>Session 2: 网络安全</h3><h4 id="From-WHOIS-to-WHOWAS-A-Large-Scale-Measurement-Study-of-Domain-Registration-Privacy-under-the-GDPR"><a href="#From-WHOIS-to-WHOWAS-A-Large-Scale-Measurement-Study-of-Domain-Registration-Privacy-under-the-GDPR" class="headerlink" title="From WHOIS to WHOWAS: A Large-Scale Measurement Study of Domain Registration Privacy under the GDPR"></a>From WHOIS to WHOWAS: A Large-Scale Measurement Study of Domain Registration Privacy under the GDPR</h4><p>受到通用数据保护条例(GDPR)的影响，大量WHOIS提供商需要修订其数据以符合条例要求。本文定量地对WHOIS提供商应对政策做出改变、数据修订策略与引用WHOIS数据的应用做出系统研究。</p>
+<p>为了广泛地分析WHOIS提供商的数据，面临三大问题：</p>
+<ul>
+<li>域名系统过于碎片化，存在数千WHOIS提供商以不同的格式提供WHOIS数据</li>
+<li>WHOIS供应商不会公布其开始遵守GDPR的时节节点，导致需要持续检测GDPR公布前后较长一段时间改观测WHOIS供应商的反应</li>
+<li>ICANN给出的临时规范建议比较模糊，供应商有多种数据修订手段，因此简单的关键字匹配等方法会造成较高的识别错误率</li>
+</ul>
+<p>针对前两项挑战，作者与公司合作，被动采集18年1月至19年12月的WHOIS数据，包含1.2亿WHOIS记录与2.67亿域名的数据集。针对第三项问题，如下图所示，由于大部分WHOIS供应商依据ICANN的规范建议，使用简易的自动化方法修订其记录，其条目在统计学上会呈现出一定规律。因此，作者提出基于聚类算法的无监督方法来表征WHOIS的合规水平。</p>
+<p><img src="https://static01.imgkr.com/temp/a353f72cedb3419d9a1a339817ced9fe.jpg" alt></p>
+<p>基于收集到的大量WHOIS数据，作者按WHOIS条目按提供商及年份分类，将数据以(provider; registrant region; data subject; time window)四元组为节点存储。针对data subject，为了减少特定数据对聚类算法的影响，将条目中特定字符串以统一的Token替换(域名、数字等)。特殊的，作者定义四元组以定义邮箱地址条目数据：1.邮箱用户名(@之前)长度2.邮箱地址域名3.web形式链接的域名4.该部分数据子字段的数量。最后，作者使用TF-IDF提取WHOIS条目文本的特征，使用DBSCAN算法进行聚类分析。</p>
+<p>其实验结果(提供大量属于EEA域名的WHOIS供应商)如下图所示</p>
+<p><img src="https://static01.imgkr.com/temp/b05f8d47cd7f4cc1a15591952e73a651.jpg" alt></p>
+<p>根据实验结果可以看到，GDPR对大型WHOIS供应商有较强的影响力，但是并非所有供应商都按要求完全服从保护条例要求。在时间层面，大部分供应商都在GDPR实际生效前对它们的WHOIS条目数据进行修订以符合条例要求，并且这一行为在ICANN发布临时规范建议后尤为明显。在数据保护的手法方面，对于联系方式数据，部分供应商将用户真实信息替换为服务商信息、空信息或类似“redacted for privacy”的提示信息；相似的，对于电子邮箱信息，供应商使用假名邮箱、WEB链接、统一邮箱地址或分层访问系统将用户真实邮箱进行隐藏。鉴于域名持有人需要邮箱进行域名交易、证书验证或接收漏洞通知等原因，ICANN并不推荐将邮箱地址替换为空。</p>
+<p><img src="https://static01.imgkr.com/temp/7f7fbf353db54fc7b5530f7a71325c0a.jpg" alt></p>
+<p>进一步分析大型WHOIS供应商的实验结果，如上图示，虽然GDPR政策只要求保护属于EEA的域名，但是大部分大型供应商对不属于EEA的域名同样进行了保护（既上图中蓝线和黄线同时下降到几乎为0）。不幸的是，小型供应商对于GDPR政策的反应并不积极，如下图左侧所示，在32个不合规的供应商中，有21个的域名份额不到总共的0.07%。</p>
+<p><img src="https://static01.imgkr.com/temp/4be5e586a83e47a496fb3f3318234b04.jpg" alt></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag"># 网络安全</a>
+          
+            <a href="/tags/%E4%BB%A3%E7%A0%81%E5%B5%8C%E5%85%A5/" rel="tag"># 代码嵌入</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/05/21/BlackWidow/" rel="next" title="数据驱动的黑盒WEB扫描器">
+                <i class="fa fa-chevron-left"></i> 数据驱动的黑盒WEB扫描器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jfif"
+                alt="Cinder" />
+            
+              <p class="site-author-name" itemprop="name">Cinder</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Session-1-软件系统安全"><span class="nav-number">1.</span> <span class="nav-text">Session 1: 软件系统安全</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Learning-an-Assembly-Language-Model-for-Instruction-Embedding"><span class="nav-number">1.1.</span> <span class="nav-text">Learning an Assembly Language Model for Instruction Embedding</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Session-2-网络安全"><span class="nav-number">2.</span> <span class="nav-text">Session 2: 网络安全</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#From-WHOIS-to-WHOWAS-A-Large-Scale-Measurement-Study-of-Domain-Registration-Privacy-under-the-GDPR"><span class="nav-number">2.1.</span> <span class="nav-text">From WHOIS to WHOWAS: A Large-Scale Measurement Study of Domain Registration Privacy under the GDPR</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cinder</span>
+
+  
+</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
