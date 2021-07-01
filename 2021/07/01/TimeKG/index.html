@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="深度学习,知识图谱," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简介该文为发表于AAAI 2021的Learning from History: Modeling Temporal Knowledge Graphs with Sequential Copy-Generation Networks。其研究主要在于提出一种复制-生成网络，针对时态知识图谱中缺失的不完整事实进行推断、补全。在中大型知识图谱中，为了更加细致地刻画事实，通常会增加时间维度的信息以描述实体">
+<meta property="og:type" content="article">
+<meta property="og:title" content="以史为鉴：基于复制-生成网络的时态知识图谱建模">
+<meta property="og:url" content="http://yoursite.com/2021/07/01/TimeKG/index.html">
+<meta property="og:site_name" content="Web低手的笔记本">
+<meta property="og:description" content="简介该文为发表于AAAI 2021的Learning from History: Modeling Temporal Knowledge Graphs with Sequential Copy-Generation Networks。其研究主要在于提出一种复制-生成网络，针对时态知识图谱中缺失的不完整事实进行推断、补全。在中大型知识图谱中，为了更加细致地刻画事实，通常会增加时间维度的信息以描述实体">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2021/07/01/TimeKG/1.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/07/01/TimeKG/g1.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/07/01/TimeKG/g2.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/07/01/TimeKG/g3.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/07/01/TimeKG/3.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/07/01/TimeKG/4.jpg">
+<meta property="article:published_time" content="2021-07-01T11:52:09.000Z">
+<meta property="article:modified_time" content="2021-07-01T11:52:09.844Z">
+<meta property="article:author" content="Cinder">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="知识图谱">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2021/07/01/TimeKG/1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/07/01/TimeKG/"/>
+
+
+
+
+
+  <title>以史为鉴：基于复制-生成网络的时态知识图谱建模 | Web低手的笔记本</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Web低手的笔记本</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/07/01/TimeKG/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cinder">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jfif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Web低手的笔记本">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">以史为鉴：基于复制-生成网络的时态知识图谱建模</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-07-01T19:52:09+08:00">
+                2021-07-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">论文笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>该文为发表于AAAI 2021的Learning from History: Modeling Temporal Knowledge Graphs with Sequential Copy-Generation Networks。其研究主要在于提出一种复制-生成网络，针对时态知识图谱中缺失的不完整事实进行推断、补全。在中大型知识图谱中，为了更加细致地刻画事实，通常会增加时间维度的信息以描述实体与实体之间的动态关系与交互。此类时态知识图谱通常是不完整的，需要借助一定方法对确实事实进行推理补充。经观察，作者注意到许多事实存在延时间线重复出现的特征（如外事访问、经济危机等）。因此，在篇论文中，作者提出一种复制-生成网络，分别从整个实体空间中对未来时间进行预测，也识别历史中反复出现的事实对预测进行校准，并设计实验最终证明其模型的有效性。</p>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>作者为他提出的预测模型命名为CyGNet(Temporal Copy-Generation Network),该模型结合复制和生成两种推理模式，分别在历史实体集合和整体实体集合上进行预测，并整合预测结果，实现更加精准地对未来事实进行预测。本文定义的时态知识图谱是由一组由时间顺序排列的事实四元组<strong>(s,p,o,t)</strong>组成的，其中s、p、o、t分别表示主体、关系、客体和时间。需要解决的问题是通过已有数据，针对<strong>(s,p,?,t)</strong>、<strong>(?,p,o,t)</strong>、<strong>(s,?,o,t)</strong>等信息缺少情况进行预测。作者只对第一种情况进行实验，并认为其结论可以较为简单的扩展至其他情况中。如下图所示，CyGNet主要分为生成模式和复制模式，通过对两种模式的预测结果进行整合，得到最终结果。</p>
+<p><img src="/2021/07/01/TimeKG/1.jpg" alt></p>
+<p>首先，作者针对每个特定时间t<sub>k</sub>的三元组<strong>(s,p,t<sub>k</sub>)</strong>，维护一个实体集合<strong>H</strong>，该实体集合包含所有在时间t<sub>k</sub>之前，且包含s和p的事实四元组条目中，客体o所代表的实体。得到的这一集合使用multi-hot编码进行向量化以备用。</p>
+<p>针对复制模式，它旨在识别具有重复性的事实，并通过复制历史中已知的事实来相应地预测未来的事实。网络使用多层感知机进行训练，为了减少那些历史中未出现的实体的影响，作者增加了一个环节：将对应的集合<strong>H</strong>中，将所有为0的分量改为一个小负数，再和经由tanh函数激活得到的N维向量相加，最后交由softmax函数得到所有实体对应的预测概率。作者表示，这一操作使得交由softmax函数的N维向量中，未出现在历史中的候选实体对应分量接近0，体现在最后结果上就是最小化那些不敢兴趣实体(未出现在历史客体集合<strong>H</strong>中的实体)的概率。具体公式如下图所示:<strong>t<sub>u</sub></strong>表示一个单元时间步长，<strong>W</strong>和<strong>b</strong>均为可训练的隐藏参数，公式(4)中的<strong>H</strong>即为经过修改过的历史客体集合向量。</p>
+<p><img src="/2021/07/01/TimeKG/g1.jpg" alt><br><img src="/2021/07/01/TimeKG/g2.jpg" alt></p>
+<p>对于生成模式，其训练模型与复制模式相似，区别在于其负责通过从整个实体空间中选择对象实体来预测事实。生成模式所做的预测将预测的事实视为一个全新的事实，没有任何历史参考。最后，通过系数<strong>α</strong>，综合生成模式和复制模式得到最终预测果。</p>
+<p><img src="/2021/07/01/TimeKG/g3.jpg" alt></p>
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><p>实验阶段，作者针对多个数据集将CyGNet与其他相关工作进行横向对比，并设计实验，验证了从历史中学习的复制模式的有效性。其中涉及到的评价指标有<strong>MRR</strong>和<strong>Hits@n</strong>。二者均为对搜索算法的常用评价指标，前者表示在预测结果中，预测正确的排名的倒数。例如预测结果中概率最高的候选项为正确结果，则<strong>MRR</strong>为1，如果概率次高的候选项为正确结果，<strong>MRR</strong>为0.5。对于后者<strong>Hits@n</strong>，它表示正确的预测结果出现在概率前n的比例。由下二图可知，CyGnet的性能优于其他相关工作，并且复制模式和生成模式的联合应用能够提高预测的准确率。</p>
+<p><img src="/2021/07/01/TimeKG/3.jpg" alt></p>
+<p><img src="/2021/07/01/TimeKG/4.jpg" alt></p>
+<p>最后，作者表示在<strong>WIKI</strong>数据集上，其方法并未全面优于<strong>RE-NET</strong>，原因主要来自于主客体实体的数据不平衡。对此，作者也在文中进行了讨论。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+          
+            <a href="/tags/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/" rel="tag"># 知识图谱</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/06/24/ReTest/" rel="next" title="使用基于注意力的强化学习方法进行WEB应用测试">
+                <i class="fa fa-chevron-left"></i> 使用基于注意力的强化学习方法进行WEB应用测试
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jfif"
+                alt="Cinder" />
+            
+              <p class="site-author-name" itemprop="name">Cinder</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法"><span class="nav-number">2.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验"><span class="nav-number">3.</span> <span class="nav-text">实验</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cinder</span>
+
+  
+</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
