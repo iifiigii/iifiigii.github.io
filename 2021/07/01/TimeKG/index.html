@@ -93,7 +93,7 @@
 <meta property="og:image" content="http://yoursite.com/2021/07/01/TimeKG/3.jpg">
 <meta property="og:image" content="http://yoursite.com/2021/07/01/TimeKG/4.jpg">
 <meta property="article:published_time" content="2021-07-01T11:52:09.000Z">
-<meta property="article:modified_time" content="2021-07-01T11:52:09.844Z">
+<meta property="article:modified_time" content="2021-07-01T11:59:50.544Z">
 <meta property="article:author" content="Cinder">
 <meta property="article:tag" content="深度学习">
 <meta property="article:tag" content="知识图谱">
@@ -350,13 +350,13 @@
       
 
       
-        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>该文为发表于AAAI 2021的Learning from History: Modeling Temporal Knowledge Graphs with Sequential Copy-Generation Networks。其研究主要在于提出一种复制-生成网络，针对时态知识图谱中缺失的不完整事实进行推断、补全。在中大型知识图谱中，为了更加细致地刻画事实，通常会增加时间维度的信息以描述实体与实体之间的动态关系与交互。此类时态知识图谱通常是不完整的，需要借助一定方法对确实事实进行推理补充。经观察，作者注意到许多事实存在延时间线重复出现的特征（如外事访问、经济危机等）。因此，在篇论文中，作者提出一种复制-生成网络，分别从整个实体空间中对未来时间进行预测，也识别历史中反复出现的事实对预测进行校准，并设计实验最终证明其模型的有效性。</p>
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>该文为发表于AAAI 2021的Learning from History: Modeling Temporal Knowledge Graphs with Sequential Copy-Generation Networks。其研究主要在于提出一种复制-生成网络，针对时态知识图谱中缺失的不完整事实进行推断、补全。在中大型知识图谱中，为了更加细致地刻画事实，通常会增加时间维度的信息以描述实体与实体之间的动态关系与交互。此类时态知识图谱通常是不完整的，需要借助一定方法对缺失事实进行推理补充。经观察，作者注意到许多事实沿着时间线重复出现（如外事访问、经济危机等）。因此，在本篇论文中，作者提出一种复制-生成网络，不仅从整个实体空间中对未来时间的事实进行预测，也识别历史中反复出现的事实对预测进行干预，并设计实验最终证明其模型的有效性。</p>
 <h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>作者为他提出的预测模型命名为CyGNet(Temporal Copy-Generation Network),该模型结合复制和生成两种推理模式，分别在历史实体集合和整体实体集合上进行预测，并整合预测结果，实现更加精准地对未来事实进行预测。本文定义的时态知识图谱是由一组由时间顺序排列的事实四元组<strong>(s,p,o,t)</strong>组成的，其中s、p、o、t分别表示主体、关系、客体和时间。需要解决的问题是通过已有数据，针对<strong>(s,p,?,t)</strong>、<strong>(?,p,o,t)</strong>、<strong>(s,?,o,t)</strong>等信息缺少情况进行预测。作者只对第一种情况进行实验，并认为其结论可以较为简单的扩展至其他情况中。如下图所示，CyGNet主要分为生成模式和复制模式，通过对两种模式的预测结果进行整合，得到最终结果。</p>
 <p><img src="/2021/07/01/TimeKG/1.jpg" alt></p>
-<p>首先，作者针对每个特定时间t<sub>k</sub>的三元组<strong>(s,p,t<sub>k</sub>)</strong>，维护一个实体集合<strong>H</strong>，该实体集合包含所有在时间t<sub>k</sub>之前，且包含s和p的事实四元组条目中，客体o所代表的实体。得到的这一集合使用multi-hot编码进行向量化以备用。</p>
-<p>针对复制模式，它旨在识别具有重复性的事实，并通过复制历史中已知的事实来相应地预测未来的事实。网络使用多层感知机进行训练，为了减少那些历史中未出现的实体的影响，作者增加了一个环节：将对应的集合<strong>H</strong>中，将所有为0的分量改为一个小负数，再和经由tanh函数激活得到的N维向量相加，最后交由softmax函数得到所有实体对应的预测概率。作者表示，这一操作使得交由softmax函数的N维向量中，未出现在历史中的候选实体对应分量接近0，体现在最后结果上就是最小化那些不敢兴趣实体(未出现在历史客体集合<strong>H</strong>中的实体)的概率。具体公式如下图所示:<strong>t<sub>u</sub></strong>表示一个单元时间步长，<strong>W</strong>和<strong>b</strong>均为可训练的隐藏参数，公式(4)中的<strong>H</strong>即为经过修改过的历史客体集合向量。</p>
+<p>首先，作者针对每个特定时间t<sub>k</sub>的三元组<strong>(s,p,t<sub>k</sub>)</strong>，维护一个实体集合<strong>H</strong>，该实体集合包含所有在时间t<sub>k</sub>之前，且包含s和p的事实四元组条目中，客体o所代表的实体。得到的这一集合后，再使用multi-hot编码对其进行向量化以备用。</p>
+<p>针对复制模式，它旨在识别具有重复性的事实，并通过复制历史中已知的事实来相应地预测未来的事实。网络使用多层感知机（一个全连接层）进行训练，为了减少那些历史中未出现的实体的影响，作者增加了一个环节：将对应的集合<strong>H</strong>中，将所有为0的分量改为一个小负数，再和经由tanh函数激活得到的N维向量相加，最后交由softmax函数得到所有实体对应的预测概率。作者表示，这一操作使得交由softmax函数的N维向量中，未出现在历史中的候选实体对应分量接近0，体现在最后结果上就是最小化那些不敢兴趣实体(未出现在历史客体集合<strong>H</strong>中的实体)的概率。具体公式如下图所示:<strong>t<sub>u</sub></strong>表示一个单元时间步长，<strong>W</strong>和<strong>b</strong>均为可训练的隐藏参数，公式(4)中的<strong>H</strong>即为经过修改过的历史客体集合向量。</p>
 <p><img src="/2021/07/01/TimeKG/g1.jpg" alt><br><img src="/2021/07/01/TimeKG/g2.jpg" alt></p>
-<p>对于生成模式，其训练模型与复制模式相似，区别在于其负责通过从整个实体空间中选择对象实体来预测事实。生成模式所做的预测将预测的事实视为一个全新的事实，没有任何历史参考。最后，通过系数<strong>α</strong>，综合生成模式和复制模式得到最终预测果。</p>
+<p>对于生成模式，其训练模型与复制模式相似，区别在于其负责通过从整个实体空间中选择对象实体来预测事实。生成模式所做的预测将预测的事实视为一个全新的事实，没有任何历史参考。最后，通过系数<strong>α</strong>，综合生成模式和复制模式得到最终预测结果。</p>
 <p><img src="/2021/07/01/TimeKG/g3.jpg" alt></p>
 <h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><p>实验阶段，作者针对多个数据集将CyGNet与其他相关工作进行横向对比，并设计实验，验证了从历史中学习的复制模式的有效性。其中涉及到的评价指标有<strong>MRR</strong>和<strong>Hits@n</strong>。二者均为对搜索算法的常用评价指标，前者表示在预测结果中，预测正确的排名的倒数。例如预测结果中概率最高的候选项为正确结果，则<strong>MRR</strong>为1，如果概率次高的候选项为正确结果，<strong>MRR</strong>为0.5。对于后者<strong>Hits@n</strong>，它表示正确的预测结果出现在概率前n的比例。由下二图可知，CyGnet的性能优于其他相关工作，并且复制模式和生成模式的联合应用能够提高预测的准确率。</p>
 <p><img src="/2021/07/01/TimeKG/3.jpg" alt></p>
