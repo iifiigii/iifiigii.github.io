@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Sqli,盲注," />
+  <meta name="keywords" content="Golang,作用域," />
 
 
 
@@ -79,25 +79,21 @@
 
 
 
-<meta name="description" content="通过Sqli-Lab的8-10关学习下盲注的基本操作，主要是基于布尔的盲注和基于时间的盲注。记录一下常用的函数和指令，方便以后回来查。 Less-8第八关出题人的提示是使用基于布尔的盲注，简单测试可以看到，当查询语句正常时不会显示查询信息，报错时也不会显示错误信息。同时，id参数应该是在where后，当条件为真时页面会显示“ You are in………..”。条件为假时什么都不会显示，这个区别也就">
+<meta name="description" content="数组切片从定义上讲，深拷贝是将原有的变量的空间全部拷贝一份，而浅拷贝仅仅拷贝的是变量的值，没有对指向的空间进行任何拷贝。Golang中的数据分为值类型(int,float)和引用类型(slice,map)，值类型直接存储，在栈中，引用类型存储地址，地址存储最终的值，在堆中。如下面代码所示，b会随着a变化而变化，主要容易采坑就是这种引用类型。 12345a :&#x3D; []int&amp;#123;1&amp;#125;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Sqli-labs学习笔记2">
-<meta property="og:url" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/index.html">
+<meta property="og:title" content="Golang深浅拷贝、数组切片、变量作用域辨析">
+<meta property="og:url" content="http://yoursite.com/2021/07/14/GoNote1/index.html">
 <meta property="og:site_name" content="Web低手的笔记本">
-<meta property="og:description" content="通过Sqli-Lab的8-10关学习下盲注的基本操作，主要是基于布尔的盲注和基于时间的盲注。记录一下常用的函数和指令，方便以后回来查。 Less-8第八关出题人的提示是使用基于布尔的盲注，简单测试可以看到，当查询语句正常时不会显示查询信息，报错时也不会显示错误信息。同时，id参数应该是在where后，当条件为真时页面会显示“ You are in………..”。条件为假时什么都不会显示，这个区别也就">
+<meta property="og:description" content="数组切片从定义上讲，深拷贝是将原有的变量的空间全部拷贝一份，而浅拷贝仅仅拷贝的是变量的值，没有对指向的空间进行任何拷贝。Golang中的数据分为值类型(int,float)和引用类型(slice,map)，值类型直接存储，在栈中，引用类型存储地址，地址存储最终的值，在堆中。如下面代码所示，b会随着a变化而变化，主要容易采坑就是这种引用类型。 12345a :&#x3D; []int&amp;#123;1&amp;#125;">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/1.png">
-<meta property="og:image" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/2.png">
-<meta property="og:image" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/3.png">
-<meta property="og:image" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/4.png">
-<meta property="og:image" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/5.png">
-<meta property="article:published_time" content="2020-06-23T07:52:18.000Z">
-<meta property="article:modified_time" content="2020-06-24T03:13:55.750Z">
+<meta property="og:image" content="http://yoursite.com/2021/07/14/GoNote1/1.jpg">
+<meta property="article:published_time" content="2021-07-14T11:46:11.000Z">
+<meta property="article:modified_time" content="2021-07-14T11:46:11.076Z">
 <meta property="article:author" content="Cinder">
-<meta property="article:tag" content="Sqli">
-<meta property="article:tag" content="盲注">
+<meta property="article:tag" content="Golang">
+<meta property="article:tag" content="作用域">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/1.png">
+<meta name="twitter:image" content="http://yoursite.com/2021/07/14/GoNote1/1.jpg">
 
 
 
@@ -127,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2020/06/23/Sqli-labs学习笔记2/"/>
+  <link rel="canonical" href="http://yoursite.com/2021/07/14/GoNote1/"/>
 
 
 
 
 
-  <title>Sqli-labs学习笔记2 | Web低手的笔记本</title>
+  <title>Golang深浅拷贝、数组切片、变量作用域辨析 | Web低手的笔记本</title>
   
 
 
@@ -260,7 +256,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/07/14/GoNote1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Cinder">
@@ -277,7 +273,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Sqli-labs学习笔记2</h1>
+          <h1 class="post-title" itemprop="name headline">Golang深浅拷贝、数组切片、变量作用域辨析</h1>
         
 
         <div class="post-meta">
@@ -289,8 +285,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-06-23T15:52:18+08:00">
-                2020-06-23
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-07-14T19:46:11+08:00">
+                2021-07-14
               </time>
             
 
@@ -349,12 +345,27 @@
       
 
       
-        <p>通过Sqli-Lab的8-10关学习下盲注的基本操作，主要是基于布尔的盲注和基于时间的盲注。记录一下常用的函数和指令，方便以后回来查。</p>
-<h2 id="Less-8"><a href="#Less-8" class="headerlink" title="Less-8"></a>Less-8</h2><p>第八关出题人的提示是使用基于布尔的盲注，简单测试可以看到，当查询语句正常时不会显示查询信息，报错时也不会显示错误信息。同时，id参数应该是在<code>where</code>后，当条件为真时页面会显示“ You are in………..”。<br><img src="/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/1.png" alt><br>条件为假时什么都不会显示，这个区别也就产生了基于布尔盲注的基础。<br><img src="/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/2.png" alt><br>比如可以使用<code>?id=1&#39;and (length(database()))&gt;某长度 --+</code>的语句，依照页面的不同反应来探测数据库名字的长度。<br>这里记录下可能用到的函数：<br><code>left(a,b)</code> 从左侧截取字符串a的前b位<br><code>substr(a,b,c)</code> 从b位置开始,截取字符串a的c长度<br><code>mid(a,b,c)</code> 从b位置开始,截取字符串a的c长度<br><code>length(a)</code> 返回字符串a的长度<br><code>Ascii(a)</code> 返回字符串a最左面字符的ASCII值<br><code>ord(a)</code>  返回字符串a最左面字符的ASCII值<br>实际使用过程中，手工操作的话，还应该结合二分法减少探测的次数，而如果使用一些脚本工具就方便得多。<br>使用sqlmap查看数据库名时，可以看到数据库名是在一个字符一个字符往出蹦，证明是在进行一个不断试探地过程。<br><img src="/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/3.png" alt><br>常用的Sqlmap命令：<br><code>-u</code> 后跟目标url常用于GET型<br><code>-r</code> 后跟BurpSuite导出文件，用于POST型<br><code>-dbms</code> 指定某种数据库<br><code>--is-dba</code> 查看当前用户权限<br><code>--current-db</code> 查看当前数据库<br><code>--current-user</code> 查看当前用户<br><code>--passwords</code> 查看数据库密码<br><code>-D 数据库名 -tables</code> 查看某数据中的表名<br><code>-D 数据库名 -T 表名 -columns</code> 查看某表的字段名<br><code>-D 数据库名 -T 表名 -C 字段名 –dump</code> 导出某表的指定字段数据  </p>
-<h2 id="Less-9"><a href="#Less-9" class="headerlink" title="Less-9"></a>Less-9</h2><p>第九关题目提示是基于延时的注入，经过简单尝试后，这一关不管我输入是对是错，能否查询出数据，页面都只显示“ You are in………..”，因此基于布尔注入也不好使了。看了一些介绍基于延时注入的讲解，感觉方法的设计还是很巧妙的。如果说基于布尔的方法是通过可见的“真|假”结果来探测数据库信息，那么基于延时的方法就是通过运行时间来判断<code>if</code>语句的“真|假”结果进而去探测数据库信息。还是以获取数据库名长度来举例子，在第九关就可以构造这样的攻击字符串。<br>?id=1’ and if(length(database())&gt;9,sleep(5),sleep(10)) –+<br>?id=1’ and if(length(database())&gt;1,sleep(5),sleep(10)) –+<br><img src="/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/4.png" alt>　　　　　　　　　　　　　　　　　<img src="/2020/06/23/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/5.png" alt>　　</p>
-<p>可以看到页面响应的时间是不一样的，可以通过响应的时间判断前面语句的“真|假”结果。<br>顺便记录一下，我在测试时发现id=-1时无法触发后面的<code>if</code>语句。经查询，<code>where</code>后用<code>and</code>连接的条件如果先执行的条件为假，后面就不会继续执行了。换为<code>or</code>连接则会继续执行，但是会对数据库中每一条数据都执行一遍，这样就会造成超长的延时，是不可取的。<br>常用到的函数有这些：<br><code>if(a,b,c)</code> 如果a为真，返回b，否则返回c<br><code>sleep(n)</code> 停n秒<br><code>BENCHMARK(n,a)</code> 将a语句执行n遍<br><code>SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.tables C;</code><br>笛卡尔积，n-&gt;n^3，需要一段时间来执行</p>
-<h2 id="Less-10"><a href="#Less-10" class="headerlink" title="Less-10"></a>Less-10</h2><p>和第九关的区别是把单引号闭合改为用双引号。</p>
+        <h2 id="数组切片"><a href="#数组切片" class="headerlink" title="数组切片"></a>数组切片</h2><p>从定义上讲，深拷贝是将原有的变量的空间全部拷贝一份，而浅拷贝仅仅拷贝的是变量的值，没有对指向的空间进行任何拷贝。Golang中的数据分为值类型(int,float)和引用类型(slice,map)，值类型直接存储，在栈中，引用类型存储地址，地址存储最终的值，在堆中。如下面代码所示，b会随着a变化而变化，主要容易采坑就是这种引用类型。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a := []<span class="keyword">int</span>&#123;<span class="number">1</span>&#125;</span><br><span class="line">b := a</span><br><span class="line">a[<span class="number">0</span>] = <span class="number">2</span></span><br><span class="line">fmt.Println(a) <span class="comment">//[2]</span></span><br><span class="line">fmt.Println(b) <span class="comment">//[2]</span></span><br></pre></td></tr></table></figure>
 
+<p>切片类型底层由数组类型进行存储，具体来讲，其由三部分组成，分别为指向底层数组的指针、切片当前长度和切片容量。这时就不得不提一嘴数组，数组是分配的连续内存。写到这里时，突然很好奇如果数组仅仅是一块连续的内存，不记录数据类型与容量，如何判断访问是否越界。百度了一下得知是我多虑了，Go源码中，数组对象是包含元素类型和数组大小信息的，这些信息是会保存到中间代码里的（如下中间代码）。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">v14 (<span class="number">15</span>) = LocalAddr &lt;*[<span class="number">3</span>]<span class="keyword">int</span>&gt; &#123;arr&#125; v2 v12</span><br><span class="line">v15 (<span class="number">15</span>) = PtrIndex &lt;*<span class="keyword">int</span>&gt; v14 v7</span><br></pre></td></tr></table></figure>
+<p>说完数组，回到切片上，其在内存中的结构如下，如果使用切片创建一个切片，那么就会出现上面的情况，它们底层引用的数组是同一个。</p>
+<p><img src="/2021/07/14/GoNote1/1.jpg" alt></p>
+<p>如果希望底层引用不同的数组，可以使用append，当底层数据容量不够时，就会自动创建新的底层数组。想要增加容量，基本也是只能使用append。因此，为了完成深拷贝，可以在整体浅拷贝切片后append一个新的值进来，以使底层不得不创建新数组。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a := []<span class="keyword">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;</span><br><span class="line">b := <span class="built_in">append</span>(a,<span class="number">6</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="变量作用域"><a href="#变量作用域" class="headerlink" title="变量作用域"></a>变量作用域</h2><p>作用域基本遵循的原则有：</p>
+<ul>
+<li>就近原则</li>
+<li>内层能看见外层变量</li>
+<li>if/for等能初始化表达式的，其作用于高于后面的花括号<br>如下代码，可以感觉到存在三个作用域中的变量a<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> a := <span class="number">1</span></span><br><span class="line"> <span class="keyword">for</span> a:=<span class="number">2</span>;a&lt;<span class="number">3</span>;a++&#123;</span><br><span class="line"> 	a:=<span class="number">0</span></span><br><span class="line"> 	fmt.Println(a)<span class="comment">//0,打印一次</span></span><br><span class="line"> &#125;</span><br><span class="line"> fmt.Println(a)<span class="comment">//1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+再补充一个Golang中与作用域相关的语法糖。</li>
+</ul>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> event := getEvent(); event == EventA &#123;</span><br><span class="line">  processA(event)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  processB(event)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样做的效果是为了让event和if语句处于同一作用域中，当if/else语句组结束后，结束event的声明周期，它等同于C++中的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  Event event = getEvent();</span><br><span class="line">  <span class="keyword">if</span> (event == EventA) &#123;</span><br><span class="line">    processA(event);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    processB(event);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -371,9 +382,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Sqli/" rel="tag"># Sqli</a>
+            <a href="/tags/Golang/" rel="tag"># Golang</a>
           
-            <a href="/tags/%E7%9B%B2%E6%B3%A8/" rel="tag"># 盲注</a>
+            <a href="/tags/%E4%BD%9C%E7%94%A8%E5%9F%9F/" rel="tag"># 作用域</a>
           
         </div>
       
@@ -386,8 +397,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/06/22/Sqli-labs%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/" rel="next" title="Sqli-labs学习笔记1">
-                <i class="fa fa-chevron-left"></i> Sqli-labs学习笔记1
+              <a href="/2021/07/12/V0Finder/" rel="next" title="寻找公开软件漏洞的正确来源">
+                <i class="fa fa-chevron-left"></i> 寻找公开软件漏洞的正确来源
               </a>
             
           </div>
@@ -395,10 +406,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/06/24/%E8%8B%B1%E6%96%87%E5%AD%A6%E6%9C%AF%E5%86%99%E4%BD%9C%E7%AC%94%E8%AE%B0Unit0-1/" rel="prev" title="英文学术写作笔记Unit0-1">
-                英文学术写作笔记Unit0-1 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -532,7 +539,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-8"><span class="nav-number">1.</span> <span class="nav-text">Less-8</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-9"><span class="nav-number">2.</span> <span class="nav-text">Less-9</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Less-10"><span class="nav-number">3.</span> <span class="nav-text">Less-10</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数组切片"><span class="nav-number">1.</span> <span class="nav-text">数组切片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变量作用域"><span class="nav-number">2.</span> <span class="nav-text">变量作用域</span></a></li></ol></div>
             
 
           </div>
