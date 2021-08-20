@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="机器学习,安全," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简介该文主要研究了将机器学习方法应用在计算机安全领域中(恶意软件检测、二进制代码分析等)一些常见的陷阱。踩到这些陷阱会降低模型性能并使其难以有效部署。因此，在本篇论文中，作者通过对过去10年间30余篇安全顶会论文研究，系统性的总结出10种陷阱，并提出一些方法以帮助安全研究人员能尽量避开它们，促进机器学习方法在安全领域的设计、开发、应用、评估与部署。 缺陷如下图所示，作者将一个安全问题从提出到给出解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安全领域下的机器学习注意事项">
+<meta property="og:url" content="http://yoursite.com/2021/08/20/DosDont/index.html">
+<meta property="og:site_name" content="Web低手的笔记本">
+<meta property="og:description" content="简介该文主要研究了将机器学习方法应用在计算机安全领域中(恶意软件检测、二进制代码分析等)一些常见的陷阱。踩到这些陷阱会降低模型性能并使其难以有效部署。因此，在本篇论文中，作者通过对过去10年间30余篇安全顶会论文研究，系统性的总结出10种陷阱，并提出一些方法以帮助安全研究人员能尽量避开它们，促进机器学习方法在安全领域的设计、开发、应用、评估与部署。 缺陷如下图所示，作者将一个安全问题从提出到给出解">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://static01.imgkr.com/temp/4d38d1ab278a4c6f854d6168c5bf34a7.jpg">
+<meta property="og:image" content="https://static01.imgkr.com/temp/adf4becf45d34e1f980fce958078ad74.jpg">
+<meta property="og:image" content="https://static01.imgkr.com/temp/ada843c318af44598e57a88c89d2f86c.jpg">
+<meta property="og:image" content="https://static01.imgkr.com/temp/2197cb0469bc4610a982e8602e50630d.jpg">
+<meta property="article:published_time" content="2021-08-20T05:40:40.000Z">
+<meta property="article:modified_time" content="2021-08-20T05:40:40.244Z">
+<meta property="article:author" content="Cinder">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://static01.imgkr.com/temp/4d38d1ab278a4c6f854d6168c5bf34a7.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/08/20/DosDont/"/>
+
+
+
+
+
+  <title>安全领域下的机器学习注意事项 | Web低手的笔记本</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Web低手的笔记本</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/20/DosDont/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cinder">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jfif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Web低手的笔记本">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">安全领域下的机器学习注意事项</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-20T13:40:40+08:00">
+                2021-08-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">论文笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>该文主要研究了将机器学习方法应用在计算机安全领域中(恶意软件检测、二进制代码分析等)一些常见的陷阱。踩到这些陷阱会降低模型性能并使其难以有效部署。因此，在本篇论文中，作者通过对过去10年间30余篇安全顶会论文研究，系统性的总结出10种陷阱，并提出一些方法以帮助安全研究人员能尽量避开它们，促进机器学习方法在安全领域的设计、开发、应用、评估与部署。</p>
+<h2 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h2><p>如下图所示，作者将一个安全问题从提出到给出解决方法抽象为6个步骤。刨除提出问题和问题解决，剩余四个主要流程：收集数据与打标签、系统设计与机器学习、表现评估、部署与操作中共存在10种陷阱可能导致结果失真或降低性能。</p>
+<p><img src="https://static01.imgkr.com/temp/4d38d1ab278a4c6f854d6168c5bf34a7.jpg" alt></p>
+<ol>
+<li>样本偏差<br>如果样本数据的分布不能很好的反应出现安全问题的真实环境情况，那么很难从训练数据中得出有意义的结论。例如在网络入侵检测方法中，通常使用人工制造的攻击数据进行评估，这些攻击在评估数据集中出现的频率远高于现实环境。如下图所示，作者对某个网络入侵检测方法中使用的数据集进行分析，发现攻击流量十分明显，并且正常流量随着攻击开始而停止了。这样的训练样本会让模型在训练中学习到虚假的因果关系，降低其性能。</li>
+</ol>
+<p><img src="https://static01.imgkr.com/temp/adf4becf45d34e1f980fce958078ad74.jpg" alt></p>
+<ol start="2">
+<li>标签不准<br>许多安全问题是使用机器学习中的分类模型解决的。为了训练这些模型，就需要给样本打标签，但是许多安全问题无法获得准确的标签(例如检测网络攻击和恶意软件)。因此，研究人员选用像VirusTotal这样的外部工具来打标签，这种操作在一定情况下是不可靠的。此外，攻击者手法的变化会引入新的标签或者造成不同种类标签之间的比例发生变化，这就使得真实情况与训练时的情况产生差异。不能适应这些变化的系统一旦部署就会​​出现性能下降。</li>
+<li>数据窥探<br>最基础的数据窥探就是无意中将测试集应用于与模型训练相关的某个步骤中，这相当于在一定程度上让模型“偷看了答案”，从而在实验评估中获得了更好的结果。此外，作者发现了另外两类更加隐瞒与微妙的数据窥探陷阱：时间窥探、选择性窥探。前者讲得是在训练时忽视了数据内部的时间特征，例如针对恶意软件数据集进行k-folds验证时，训练集中可能包括每个恶意软件家族的样本，但是对于老的软件家族来说，属于新家族的恶意软件相关数据应是未知的，因此不应该将未来的知识整合进来进行训练；后者讲得是在训练前，就将一些数据通过规则过滤掉。作者对数据窥探陷阱的细分可以参考下表。</li>
+</ol>
+<p><img src="https://static01.imgkr.com/temp/ada843c318af44598e57a88c89d2f86c.jpg" alt></p>
+<ol start="4">
+<li>错误的因果关系<br>安全任务时常会使用具有不可解释特征空间来构建复杂学习模型，从而错误的因果关系。例如在某个希望通过学习编码风格从而识别代码归属的工作中，其数据采集自某项竞赛选手使用的代码。为了方便选手，竞赛组织者向选手提供了一些模板，导致模型通过这些模板内容对代码归属进行识别，而不是编码风格。</li>
+<li>参数偏向性<br>使用未校准的评价指标或者使用测试集指导参数设定会导致参数选择上的偏向性。另外，实验环境和真实环境的差异也会造成实验环境下选择的参数无法适应真实环境，导致性能下降。</li>
+<li>不合适的基线方法<br>简单的模型不一定不好，复杂的学习方法不仅会增加过度拟合的风险，还会增加运行时开销、攻击面、以及部署的时间和成本。同样，机器学习也不一定是解决安全问题的唯一方法。</li>
+<li>不合适的评价指标<br>不合适的评价指标选择可能会夸大事实，掩盖其真实水平。如下图所示，在一个不平衡数据集（1:100）上，仅从ROC曲线来看，性能表现出色，但精度低下却暴露了分类器的真实性能。</li>
+</ol>
+<p><img src="https://static01.imgkr.com/temp/2197cb0469bc4610a982e8602e50630d.jpg" alt></p>
+<ol start="8">
+<li>基准比例谬误<br>与7相比，此陷阱重点在于对于结果的恰当解释。以上图中不平衡的数据集实验结果举例，是可能同时出现99%的真阳率和1%的假阳率，但是这样的指标实际上表明每检测出99个阳性样本，就会出现100个误报的阳性样本。实际上的性能并没有看上去那么好。</li>
+<li>只在实验环境下验证<br>许多基于机器学习来解决安全问题的方法仅在实验室环境中进行评估，夸大了它们的实际效果。</li>
+<li>模型威胁<br>这一陷阱表示在将机器学习方式应用到安全领域问题时，没有考虑模型本身存在的安全问题，例如其是否会遭到成员推理攻击、预处理攻击、数据投毒、后门攻击或者模型窃取的威胁。尤其是针对那些部署在真实环境下需要面临对抗性的系统，忽视模型自身的安全性问题所带来的影响是致命的，这些并不健壮的系统将无法提供值得信赖的、有意义的结果。</li>
+</ol>
+<h3 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h3><p>针对上述10种陷阱，作者针对其所属的4个阶段分别给出了不同的建议。</p>
+<ol>
+<li>收集数据与打标签<br>尽量以真实环境中的比例来收集样本，如果实在无法贴合真实环境情况，应对真实的数据分布情况做出多种假设，并分别进行实验；使用迁移学习方法弥补在一个领域内难以采集足够数据的问题；谨慎地对待公开的数据集，应将其主要用于和过去方法的对比；尽可能地验证标签的真实性；不能简单地去除标签不确定的数据，应想办法进行处理；预防数据随时间变化而带来的标签偏移。</li>
+<li>系统设计与机器学习<br>使用可解释的机器学习技术以检查模型是否依赖于错误的因果关系；从最开始就严格区分训练集、验证集、测试集，防止测试集在任何阶段干预到系统的构建。</li>
+<li>表现评估<br>选择的评价指标应有助于从业人员在部署期间评估安全系统的性能；安全问题通常是围绕检测罕见事件展开，可以选择不受类不平衡影响的指标，如精确召回曲线；在选择基线对比方法时，需要考虑简单的机器学习模型（如线性分类器、朴素贝叶斯等）和非机器学习模型。</li>
+<li>部署与操作<br>应将系统部署于真实环境下观察在实验室环境下观察不到的问题，分析真实数据的复杂性与多样性以对系统进行调整；应假设基于机器学习的系统将面临对抗性的考验，考虑机器学习各个搭建步骤中可能存在漏洞；假设遭到白盒攻击这种最差的情况来做预案，搭建系统时遵守Kerckhoff原则。</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>作者系统地评估了在安全领域中使用机器学习时可能遇到的10种微妙的陷阱。这些问题可能会严重影响研究的有效性并导致高估了安全系统的性能。其中部分偏向于学术上，是由于实验设计与操作存在瑕疵而产生问题，另一部分偏向工业界，是由于需要将机器学习方法落地于真实环境中而产生的问题。作者指出这些问题即使是在已发表的顶会论文中也很普遍存在，并举例验证了其会导致关键结果出现严重偏差。为了让安全研究人员能够避免这些陷阱，作者针对使用机器学习方法解决安全问题的4个主要阶段分别给出了一般性的建议。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+          
+            <a href="/tags/%E5%AE%89%E5%85%A8/" rel="tag"># 安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/20/ClickThis/" rel="next" title="基于欺骗的Web认证扩展">
+                <i class="fa fa-chevron-left"></i> 基于欺骗的Web认证扩展
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jfif"
+                alt="Cinder" />
+            
+              <p class="site-author-name" itemprop="name">Cinder</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">38</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缺陷"><span class="nav-number">2.</span> <span class="nav-text">缺陷</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#建议"><span class="nav-number">2.1.</span> <span class="nav-text">建议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cinder</span>
+
+  
+</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
