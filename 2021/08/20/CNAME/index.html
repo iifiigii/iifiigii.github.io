@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CNAME伪装,用户行为跟踪," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简介该文为发表于AsiaCCS 2021的Oversharing Is Not Caring: How CNAME Cloaking Can ExposeYour Session Cookies。当前，互联网企业经常通过跟踪、分析其用户的行为数据以产生额外利润（例如广告）或改进其网站。因此，也就簇生了一些专业的第三方公司为其它公司提供跟踪用户并投放广告的业务(T&#x2F;A服务)。为了能在不同网站定位同一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="暴露会话Cookie的CNAME伪装机制">
+<meta property="og:url" content="http://yoursite.com/2021/08/20/CNAME/index.html">
+<meta property="og:site_name" content="Web低手的笔记本">
+<meta property="og:description" content="简介该文为发表于AsiaCCS 2021的Oversharing Is Not Caring: How CNAME Cloaking Can ExposeYour Session Cookies。当前，互联网企业经常通过跟踪、分析其用户的行为数据以产生额外利润（例如广告）或改进其网站。因此，也就簇生了一些专业的第三方公司为其它公司提供跟踪用户并投放广告的业务(T&#x2F;A服务)。为了能在不同网站定位同一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2021/08/20/CNAME/1.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/08/20/CNAME/2.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/08/20/CNAME/3.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/08/20/CNAME/4.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/08/20/CNAME/5.jpg">
+<meta property="article:published_time" content="2021-08-20T05:34:10.000Z">
+<meta property="article:modified_time" content="2021-08-20T05:34:10.930Z">
+<meta property="article:author" content="Cinder">
+<meta property="article:tag" content="CNAME伪装">
+<meta property="article:tag" content="用户行为跟踪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2021/08/20/CNAME/1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/08/20/CNAME/"/>
+
+
+
+
+
+  <title>暴露会话Cookie的CNAME伪装机制 | Web低手的笔记本</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Web低手的笔记本</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/08/20/CNAME/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cinder">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jfif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Web低手的笔记本">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">暴露会话Cookie的CNAME伪装机制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-20T13:34:10+08:00">
+                2021-08-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">论文笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>该文为发表于AsiaCCS 2021的Oversharing Is Not Caring: How CNAME Cloaking Can ExposeYour Session Cookies。当前，互联网企业经常通过跟踪、分析其用户的行为数据以产生额外利润（例如广告）或改进其网站。因此，也就簇生了一些专业的第三方公司为其它公司提供跟踪用户并投放广告的业务(T/A服务)。为了能在不同网站定位同一用户，这些T/A服务公司会使用第三方Cookies。但是，由于最近浏览器为了保护用户隐私，默认屏蔽第三方Cookies的原因，T/A服务公司要求其客户配置DNS设置，使用CNAME伪装机制将其基础设置包含在第一方网站的子域中，使得绕过浏览器的隐私保护机制。在本篇论文中，作者针对由于CNAME伪装机制导致会话Cookies泄露给T/A服务公司的情况进行研究。</p>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>面对浏览器隐私保护机制，T/A服务公司CNAME伪装机制以进行对抗。第一方网站通过DNS配置中的CNAME记录使用第一方子域名作为第三方跟踪域的别名，以绕过跟踪拦截器。DNS中的CNAME记录允许将一个域或子域映射到另一个域，例如网站所有者可以将其子域之一omns.bank.com配置为b.motrdc.net的别名，在使用时，先将omns.bank.com解析为b.motrdc.net然后再解析为IP地址。换句话说，CNAME伪装机制使得追踪代码看起来像是第一方，但实际上它不是，因为通过CNAME解析的资源和第一方的域不同。</p>
+<p><img src="/2021/08/20/CNAME/1.jpg" alt></p>
+<p>这种将 T/A 服务嵌入为第一方子域的方法会带来严重的安全问题。具体来说，如果第一方对其cookie的访问控制较为宽松，比如将cookie的有效域设置为整个第一方网站的域，这样在访问被伪装为第一方子域的T/A服务时，会话cookie将被泄漏到T/A服务公司，从而违反会话cookie的保密要求。会话cookie泄露使得第三方T/A服务公司有能力通过会话cookie控制cookie主人的账号。作者表示，虽然T/A服务公司也不太可能以公司身份执行此类攻击。然而，其对服务器日志有足够的访问权限的工作人员能够以个人身份劫持用户会话。并且作者认为T/A服务公司完全没必要与其余第一方cookie一起会话cookie，因此，其认为这种安全威胁值得关注并应及时解决。</p>
+<p><img src="/2021/08/20/CNAME/2.jpg" alt></p>
+<p>为了研究这一安全问题，作者设计了一种检测系统(TAFinder)去自动识别CNAME伪装以及Cookies泄露。TAFinder接受一个网站列表作为输入，然后由任务分发器分发给工作节点。工作节点使用爬虫记录网络数据包和明文 HTTP 请求/响应，并最终将捕获的数据传输到 DNS 处理单元。在DNS处理单元中找出CNAME类型条目中键与值处于不同DNS域的域名，既使用了CNAME伪装技术的域名。在最终阶段，TAFinder可以直接从使用了CNAME伪装的域名中识别出已知的T/A服务域名(通过社区黑名单)，并使用了基于机器学习分类器以识别那些未知的T/A服务域名。该分类器使用随机森林算法，共选取9种特征：涉及HTTP请求数量及比例、cookie、Content-Type等。<br>最后,TAFinder观察第一方网站是否存在泄露会话cookie的情况。</p>
+<p><img src="/2021/08/20/CNAME/3.jpg" alt></p>
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><p>作者使用Majestic Million公开的最受欢迎的100,000个网站数据集进行实验，实验结果如下。</p>
+<p><img src="/2021/08/20/CNAME/4.jpg" alt></p>
+<p>十万个网站在经过TAFinder分析后，发现了21,184个使用了CNAME伪装技术的网站，并使用机器学习分类器对3万余个未知的伪装前域名进行分类，从而发现了2756个T/A服务域名，并找到2,271个使用了T/A服务的网站。再对这些网站的会话cookie访问控制宽松程度进行进一步跟踪调研后，发现有许多流行的网站都有可能收到会话cookie泄露给T/A服务导致的会话劫持攻击与会话重放恢复攻击，如下图所示。</p>
+<p><img src="/2021/08/20/CNAME/5.jpg" alt></p>
+<p>个人认为，该文在分类器训练阶段还可以进行改进。TAFinder使用Virus Total的数据为无法使用黑名单进行判断的域名打标签。由于Virus Total是集成多种数据源，各个数据源对网站的分类标准不尽相同。因此，作者出于经验选取了数个标签(如”网络分析”等)作为将未知域名标记为T/A服务域名的根据，这使得标记结果的可信度强依赖于数据的提供商。这部分多添加一些人工验证环节能够更好地说明其方法的可信度。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CNAME%E4%BC%AA%E8%A3%85/" rel="tag"># CNAME伪装</a>
+          
+            <a href="/tags/%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E8%B7%9F%E8%B8%AA/" rel="tag"># 用户行为跟踪</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/07/14/GoNote1/" rel="next" title="Golang深浅拷贝、数组切片、变量作用域辨析">
+                <i class="fa fa-chevron-left"></i> Golang深浅拷贝、数组切片、变量作用域辨析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/20/SameSite/" rel="prev" title="现代网络应用中的同站攻击">
+                现代网络应用中的同站攻击 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jfif"
+                alt="Cinder" />
+            
+              <p class="site-author-name" itemprop="name">Cinder</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法"><span class="nav-number">2.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验"><span class="nav-number">3.</span> <span class="nav-text">实验</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cinder</span>
+
+  
+</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
