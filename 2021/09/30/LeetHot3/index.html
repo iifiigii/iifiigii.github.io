@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="数据结构,算法,LeetCode," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="11.有效的括号 简单的栈数据结构应用。栈的核心就是四个字：后进先出。遇到左括号就将其入栈，遇到右括号如果和栈顶匹配则出栈，如果不匹配则失败，最后栈为空则匹配成功。 12345678910111213141516171819202122func isValid(s string) bool &amp;#123;    var stack []int32	for _,v :&#x3D; range(s)&amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeetCode热题:三">
+<meta property="og:url" content="http://yoursite.com/2021/09/30/LeetHot3/index.html">
+<meta property="og:site_name" content="Web低手的笔记本">
+<meta property="og:description" content="11.有效的括号 简单的栈数据结构应用。栈的核心就是四个字：后进先出。遇到左括号就将其入栈，遇到右括号如果和栈顶匹配则出栈，如果不匹配则失败，最后栈为空则匹配成功。 12345678910111213141516171819202122func isValid(s string) bool &amp;#123;    var stack []int32	for _,v :&#x3D; range(s)&amp;#123;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2021/09/30/LeetHot3/1.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/09/30/LeetHot3/2.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/09/30/LeetHot3/3.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/09/30/LeetHot3/4.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/09/30/LeetHot3/5.jpg">
+<meta property="article:published_time" content="2021-09-30T08:54:12.000Z">
+<meta property="article:modified_time" content="2021-09-30T08:54:12.468Z">
+<meta property="article:author" content="Cinder">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="LeetCode">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2021/09/30/LeetHot3/1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/09/30/LeetHot3/"/>
+
+
+
+
+
+  <title>LeetCode热题:三 | Web低手的笔记本</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Web低手的笔记本</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/09/30/LeetHot3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cinder">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jfif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Web低手的笔记本">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">LeetCode热题:三</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-09-30T16:54:12+08:00">
+                2021-09-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="11-有效的括号"><a href="#11-有效的括号" class="headerlink" title="11.有效的括号"></a>11.有效的括号</h2><p><img src="/2021/09/30/LeetHot3/1.jpg" alt></p>
+<p>简单的栈数据结构应用。栈的核心就是四个字：后进先出。遇到左括号就将其入栈，遇到右括号如果和栈顶匹配则出栈，如果不匹配则失败，最后栈为空则匹配成功。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">isValid</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> stack []<span class="keyword">int32</span></span><br><span class="line">	<span class="keyword">for</span> _,v := <span class="keyword">range</span>(s)&#123;</span><br><span class="line">		<span class="keyword">if</span> v == <span class="number">40</span> || v == <span class="number">91</span> || v ==<span class="number">123</span>&#123;</span><br><span class="line">			stack = <span class="built_in">append</span>(stack,v)</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(stack) == <span class="number">0</span>&#123;</span><br><span class="line">		        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	        &#125;</span><br><span class="line">			tmp := stack[<span class="built_in">len</span>(stack)<span class="number">-1</span>]</span><br><span class="line">			<span class="keyword">if</span> (v == <span class="number">41</span> &amp;&amp; tmp == <span class="number">40</span>) || (v == <span class="number">93</span> &amp;&amp; tmp == <span class="number">91</span>) || (v == <span class="number">125</span> &amp;&amp; tmp == <span class="number">123</span>)&#123;</span><br><span class="line">				stack = stack[:<span class="built_in">len</span>(stack)<span class="number">-1</span>]</span><br><span class="line">				<span class="keyword">continue</span></span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(stack) != <span class="number">0</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="12-合并两个有序链表"><a href="#12-合并两个有序链表" class="headerlink" title="12.合并两个有序链表"></a>12.合并两个有序链表</h2><p><img src="/2021/09/30/LeetHot3/2.jpg" alt></p>
+<p>有很多种方法，这里实现一个原地修改，一次遍历的方法，在时间和空间上都是比较优秀的。为了方便，最好先定义一个悬空的链表头节点head，这样就不用特殊处理链表头部，返回的时候直接返回head.Next即可，这一技巧在很多链表题中都可以用到。此外，这道题的思路是维护一个指针，<strong>指向已经完成合并的链表尾部</strong>，这样每次在这个指针所指向节点的Next即可。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mergeTwoLists</span><span class="params">(l1 *ListNode, l2 *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> l1 == <span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> l2</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> l2 == <span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> l1</span><br><span class="line">    &#125;</span><br><span class="line">    head := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    tail := head</span><br><span class="line">    <span class="keyword">for</span> l1 != <span class="literal">nil</span> &amp;&amp; l2 != <span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> l1.Val &lt; l2.Val&#123;</span><br><span class="line">            tail.Next,l1 = l1,l1.Next</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            tail.Next,l2 = l2,l2.Next</span><br><span class="line">        &#125;</span><br><span class="line">        tail = tail.Next</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> l1 == <span class="literal">nil</span>&#123;</span><br><span class="line">        tail.Next = l2</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> l2 == <span class="literal">nil</span>&#123;</span><br><span class="line">        tail.Next = l1</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> head.Next</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="13-括号生成"><a href="#13-括号生成" class="headerlink" title="13.括号生成"></a>13.括号生成</h2><p><img src="/2021/09/30/LeetHot3/3.jpg" alt></p>
+<p>这道题想清楚思路就好做，想不清楚就做不出来。首先，定义一个由n个括号组成的字符串记为str(n)，它一定可以分解非<strong><em>‘(‘+str(p)+’)’+str(q)</em></strong>，其中<strong><em>p，q非负且p+q=n-1</em></strong>（看似简单，其实这种拆解能不重不漏，十分巧妙）。因此，可以使用类似动态规划的方法来做，用dp[i]保存使用i个括号的所有组合情况，然后将i从0遍历到n即可。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> dp [][]<span class="keyword">string</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">generateParenthesis</span><span class="params">(n <span class="keyword">int</span>)</span> []<span class="title">string</span></span> &#123;</span><br><span class="line">	dp := <span class="built_in">make</span>([][]<span class="keyword">string</span>,<span class="number">9</span>)</span><br><span class="line">	dp[<span class="number">0</span>] = <span class="built_in">append</span>(dp[<span class="number">0</span>],<span class="string">""</span>)</span><br><span class="line">	<span class="comment">//遍历到n</span></span><br><span class="line">	<span class="keyword">for</span> i:=<span class="number">1</span>;i&lt;=n;i++&#123;</span><br><span class="line">		<span class="comment">//遍历n种组合， (0,i)-&gt;(i-1,1)</span></span><br><span class="line">		<span class="keyword">for</span> j:=<span class="number">0</span>;j&lt;i;j++&#123;</span><br><span class="line">			<span class="keyword">for</span> _,v1 := <span class="keyword">range</span>(dp[j])&#123;</span><br><span class="line">				<span class="keyword">for</span> _,v2 := <span class="keyword">range</span>(dp[i-j<span class="number">-1</span>])&#123;</span><br><span class="line">					dp[i] = <span class="built_in">append</span>(dp[i],<span class="string">"("</span>+v1+<span class="string">")"</span>+v2)</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> dp[n]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="14-合并K个升序链表"><a href="#14-合并K个升序链表" class="headerlink" title="14.合并K个升序链表"></a>14.合并K个升序链表</h2><p><img src="/2021/09/30/LeetHot3/4.jpg" alt></p>
+<p>分治法中的经典题目，务必理解。该题目涉及k个升序链表，其中，合并2个升序链表的方法已知(第12题)。因此，所谓分治法就是不断把把问题拆成逻辑相同的小问题，知道拆至已知的基本情况，最后依照递归的顺序反向一步一步解决，完成最初的大问题。本体设计一个函数，能合并第i个到第j个升序链表，然后返回合并完成的链表头。该函数的实现方式是当i到j只有2个以内链表时按特殊情况处理，正常返回；当多余2个链表时分别对前一半和后一半递归的调用函数本身，然后再将得到的结果(两个合并好的链表头)，进行合并。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">merge2Lists</span><span class="params">(a *ListNode, b *ListNode)</span> *<span class="title">ListNode</span></span>&#123;</span><br><span class="line">    head := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    <span class="keyword">var</span> tail *ListNode = head</span><br><span class="line">    <span class="keyword">if</span>(a == <span class="literal">nil</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> b</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (b == <span class="literal">nil</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> a</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (a!=<span class="literal">nil</span> &amp;&amp; b != <span class="literal">nil</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span>(a.Val &lt; b.Val)&#123;</span><br><span class="line">            a, tail.Next = a.Next, a</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            b, tail.Next = b.Next, b</span><br><span class="line">        &#125;</span><br><span class="line">        tail = tail.Next</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> a != <span class="literal">nil</span> &#123;</span><br><span class="line">        tail.Next = a</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> b != <span class="literal">nil</span>&#123;</span><br><span class="line">        tail.Next = b</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> head.Next</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">merge</span><span class="params">(start <span class="keyword">int</span>, end <span class="keyword">int</span>, lists []*ListNode)</span> *<span class="title">ListNode</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> start &gt; end&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> start == end&#123;</span><br><span class="line">        <span class="keyword">return</span> lists[start]</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> end-start == <span class="number">1</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> merge2Lists(lists[start],lists[end])</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> merge2Lists(merge(start,(start+end)/<span class="number">2</span>,lists),merge((start+end)/<span class="number">2</span>+<span class="number">1</span>,end,lists))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mergeKLists</span><span class="params">(lists []*ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> merge(<span class="number">0</span>,<span class="built_in">len</span>(lists)<span class="number">-1</span>,lists)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="15-下一个排列"><a href="#15-下一个排列" class="headerlink" title="15.下一个排列"></a>15.下一个排列</h2><p><img src="/2021/09/30/LeetHot3/5.jpg" alt></p>
+<p>当前组合可以看成由k个单调递减的序列构成，为了找到下一个更大的数(比当前大，但是在所有符合要求的数中最小)，所以所有变动的数中，处于最高位的一定要变大（隐含条件：变到最高位上的数原本一定在最高位的右边，又因为这个数比原本最高位上的数字大，所以一定不可能通过将一个单调递减序列里右边的数变到左边以找到下一个最大的数），并且这个位置要尽量靠近低位。因此，结合这两个观点，正常情况下，变更的最高位应该是从右往左数第一个递减序列左边第一个数，换到这个位置上的数应该是右手第一个递减数列中最小但是比最比左手第一个数大(除特殊情况一定存在)的那个数。此时这个序列还是递减的，所以将这个递减序列颠倒成递增，就是下个更大的数。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">nextPermutation</span><span class="params">(nums []<span class="keyword">int</span>)</span></span>  &#123;</span><br><span class="line">	length := <span class="built_in">len</span>(nums)</span><br><span class="line">	<span class="keyword">if</span> length == <span class="number">0</span>&#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;<span class="keyword">else</span> <span class="keyword">if</span> length == <span class="number">1</span>&#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;<span class="keyword">else</span> <span class="keyword">if</span> length == <span class="number">2</span>&#123;</span><br><span class="line">		nums[<span class="number">0</span>], nums[<span class="number">1</span>] = nums[<span class="number">1</span>], nums[<span class="number">0</span>]</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	i := length - <span class="number">2</span></span><br><span class="line">	<span class="keyword">for</span> (i&gt;=<span class="number">0</span> &amp;&amp; nums[i] &gt;= nums[i+<span class="number">1</span>])&#123;</span><br><span class="line">		i--</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> j:= length<span class="number">-1</span>;j&gt;i &amp;&amp; i&gt;=<span class="number">0</span>;j--&#123;</span><br><span class="line">		<span class="keyword">if</span> (nums[j] &gt; nums[i])&#123;</span><br><span class="line">			nums[i],nums[j] = nums[j],nums[i]</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	i = i+<span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; (length-i)/<span class="number">2</span>; j++ &#123;</span><br><span class="line">		nums[j+i],nums[length<span class="number">-1</span>-j] = nums[length<span class="number">-1</span>-j],nums[j+i]</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+          
+            <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          
+            <a href="/tags/LeetCode/" rel="tag"># LeetCode</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/09/16/LeetHot2/" rel="next" title="LeetCode热题:二">
+                <i class="fa fa-chevron-left"></i> LeetCode热题:二
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/09/30/Whisper/" rel="prev" title="基于频域分析的实时恶意流量检测">
+                基于频域分析的实时恶意流量检测 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jfif"
+                alt="Cinder" />
+            
+              <p class="site-author-name" itemprop="name">Cinder</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#11-有效的括号"><span class="nav-number">1.</span> <span class="nav-text">11.有效的括号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-合并两个有序链表"><span class="nav-number">2.</span> <span class="nav-text">12.合并两个有序链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-括号生成"><span class="nav-number">3.</span> <span class="nav-text">13.括号生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-合并K个升序链表"><span class="nav-number">4.</span> <span class="nav-text">14.合并K个升序链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-下一个排列"><span class="nav-number">5.</span> <span class="nav-text">15.下一个排列</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cinder</span>
+
+  
+</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
