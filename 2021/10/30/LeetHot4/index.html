@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="数据结构,算法,LeetCode," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="16.最长有效括号 动态规划问题，dp数组记录以第i个字符为结尾时，最长有效括号子串的长度。逻辑为遍历字符串，当遇到右括号时，向左跳过以上一个字符为结尾的最长子串，看是否是左括号，如果是，则匹配成功，再加上这个左括号左边的最长子串就是dp[i]的最终结果。 另外一种方法是维护左右括号的个数，当左括号个数多于右括号时就要重新计数，这样通过正反两次遍历得到最终结果，可以减少空间开销。 12345678">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeetCode热题:四">
+<meta property="og:url" content="http://yoursite.com/2021/10/30/LeetHot4/index.html">
+<meta property="og:site_name" content="Web低手的笔记本">
+<meta property="og:description" content="16.最长有效括号 动态规划问题，dp数组记录以第i个字符为结尾时，最长有效括号子串的长度。逻辑为遍历字符串，当遇到右括号时，向左跳过以上一个字符为结尾的最长子串，看是否是左括号，如果是，则匹配成功，再加上这个左括号左边的最长子串就是dp[i]的最终结果。 另外一种方法是维护左右括号的个数，当左括号个数多于右括号时就要重新计数，这样通过正反两次遍历得到最终结果，可以减少空间开销。 12345678">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2021/10/30/LeetHot4/1.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/10/30/LeetHot4/2.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/10/30/LeetHot4/3.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/10/30/LeetHot4/4.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/10/30/LeetHot4/5.jpg">
+<meta property="article:published_time" content="2021-10-30T08:34:55.000Z">
+<meta property="article:modified_time" content="2021-10-30T08:34:55.382Z">
+<meta property="article:author" content="Cinder">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="LeetCode">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2021/10/30/LeetHot4/1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/10/30/LeetHot4/"/>
+
+
+
+
+
+  <title>LeetCode热题:四 | Web低手的笔记本</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Web低手的笔记本</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/10/30/LeetHot4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cinder">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jfif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Web低手的笔记本">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">LeetCode热题:四</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-10-30T16:34:55+08:00">
+                2021-10-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="16-最长有效括号"><a href="#16-最长有效括号" class="headerlink" title="16.最长有效括号"></a>16.最长有效括号</h2><p><img src="/2021/10/30/LeetHot4/1.jpg" alt></p>
+<p>动态规划问题，dp数组记录以第i个字符为结尾时，最长有效括号子串的长度。逻辑为遍历字符串，当遇到右括号时，向左跳过以上一个字符为结尾的最长子串，看是否是左括号，如果是，则匹配成功，再加上这个左括号左边的最长子串就是dp[i]的最终结果。</p>
+<p>另外一种方法是维护左右括号的个数，当左括号个数多于右括号时就要重新计数，这样通过正反两次遍历得到最终结果，可以减少空间开销。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">longestValidParentheses</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    length := <span class="built_in">len</span>(s)</span><br><span class="line">    dp := <span class="built_in">make</span>([]<span class="keyword">int</span>,length+<span class="number">5</span>)</span><br><span class="line">    dp[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">    dp[<span class="number">1</span>] = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i:=<span class="number">2</span>;i&lt;=length;i++&#123;</span><br><span class="line">        skip := dp[i<span class="number">-1</span>]</span><br><span class="line">        <span class="keyword">if</span>(s[i<span class="number">-1</span>] == <span class="number">40</span>)&#123;</span><br><span class="line">            dp[i] = <span class="number">0</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> i<span class="number">-2</span>-skip &gt;= <span class="number">0</span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(s[i<span class="number">-2</span>-skip] == <span class="number">40</span>)&#123;</span><br><span class="line">                dp[i] = skip + <span class="number">2</span></span><br><span class="line">                <span class="keyword">if</span>(i-dp[i] &gt; <span class="number">0</span>)&#123;</span><br><span class="line">                    dp[i] += dp[i-dp[i]]</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            dp[i] = <span class="number">0</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    max := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _,v := <span class="keyword">range</span>(dp)&#123;</span><br><span class="line">        <span class="keyword">if</span> v &gt; max&#123;</span><br><span class="line">            max = v</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> max</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="17-搜索旋转排序数组"><a href="#17-搜索旋转排序数组" class="headerlink" title="17.搜索旋转排序数组"></a>17.搜索旋转排序数组</h2><p><img src="/2021/10/30/LeetHot4/2.jpg" alt></p>
+<p>一个简单的二分应用，把几种情况都分清楚就不难做。由于有序数组经过旋转，可以看做左右两部分，在一般情况下(k!=0),如果一个数存在并大于nums[0],那么应该位于左侧递增数列中。因此，二分就按照中值和目标值的大小关系和中值和目标值是否同侧分为四种情况。当然，在k=0时，虽然tarFlag和midFlag无法正确表示目标数位置的左右关系，但是并不影响二者之间相对是否位于同侧，因此不需要特判。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(nums []<span class="keyword">int</span>, target <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    tarFlag := <span class="literal">false</span></span><br><span class="line">    midFlag := <span class="literal">false</span></span><br><span class="line">    length := <span class="built_in">len</span>(nums)</span><br><span class="line">    left, right := <span class="number">0</span>, length<span class="number">-1</span></span><br><span class="line">    <span class="keyword">if</span> target &gt;= nums[<span class="number">0</span>] &#123; <span class="comment">//如果存在tar，在左</span></span><br><span class="line">        tarFlag = <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(tarFlag)</span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := (left + right) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] == target &#123;</span><br><span class="line">            <span class="keyword">return</span> mid</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt;= nums[<span class="number">0</span>] &#123; <span class="comment">//mid在左</span></span><br><span class="line">            midFlag = <span class="literal">true</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            midFlag = <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            <span class="keyword">if</span> tarFlag == midFlag &#123;</span><br><span class="line">                right = mid - <span class="number">1</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                left = mid + <span class="number">1</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> tarFlag == midFlag &#123;</span><br><span class="line">                left = mid + <span class="number">1</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                right = mid - <span class="number">1</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="18-在排序数组中查找元素的第一个和最后一个位置"><a href="#18-在排序数组中查找元素的第一个和最后一个位置" class="headerlink" title="18.在排序数组中查找元素的第一个和最后一个位置"></a>18.在排序数组中查找元素的第一个和最后一个位置</h2><p><img src="/2021/10/30/LeetHot4/3.jpg" alt></p>
+<p>最好只能想到用logn复杂度级别的算法，两次二分分别找到左右区间端点，对于左端点，核心就是找到和目标值相同的中值时，判断下左侧数字是否不同，如果相同则取[left,mid]区间继续二分过程。下面代码中的firstLeft为了稍稍优化第二次二分的区间大小可以忽略。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">searchRange</span><span class="params">(nums []<span class="keyword">int</span>, target <span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">    length := <span class="built_in">len</span>(nums)</span><br><span class="line">    </span><br><span class="line">    firstLeft, left, right :=<span class="number">0</span>,  <span class="number">0</span>, length<span class="number">-1</span></span><br><span class="line">    <span class="keyword">var</span> start, end <span class="keyword">int</span> = <span class="number">-1</span>, <span class="number">-1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := (left + right) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] == target &#123;</span><br><span class="line">            firstLeft = mid</span><br><span class="line">            <span class="keyword">if</span> mid == <span class="number">0</span> &#123;</span><br><span class="line">                start = <span class="number">0</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> nums[mid<span class="number">-1</span>] &lt; target &#123;</span><br><span class="line">                start = mid</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                right = mid - <span class="number">1</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    left = firstLeft</span><br><span class="line">    right = length - <span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> left &lt;= right &#123;</span><br><span class="line">        mid := (left + right) / <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> nums[mid] == target &#123;</span><br><span class="line">            <span class="keyword">if</span> mid == length<span class="number">-1</span> &#123;</span><br><span class="line">                end = length - <span class="number">1</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> nums[mid+<span class="number">1</span>] &gt; target &#123;</span><br><span class="line">                end = mid</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                left = mid + <span class="number">1</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> nums[mid] &gt; target &#123;</span><br><span class="line">            right = mid - <span class="number">1</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            left = mid + <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> []<span class="keyword">int</span>&#123;start, end&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="19-在排序数组中查找元素的第一个和最后一个位置"><a href="#19-在排序数组中查找元素的第一个和最后一个位置" class="headerlink" title="19.在排序数组中查找元素的第一个和最后一个位置"></a>19.在排序数组中查找元素的第一个和最后一个位置</h2><p><img src="/2021/10/30/LeetHot4/4.jpg" alt></p>
+<p>回溯遍历的题我总是在不重不漏犯迷糊，本题使用的方法是实现一个函数(下面命名为dfs)计算使用从第i个候选数中挑选组合求和为目标值。在递归的过程中，可以选择使用第i个数或者不使用，当使用某个数，就将当前目标值减去这个数并送入下一层递归。最终代码如下所示，最精髓的地方一个是在使用当前数和跳过当前数这个递归思路上，第二个是每次选择当前数，在递归返回以后需要修改记录组合的数据进行回溯，比较难理解。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">combinationSum</span><span class="params">(candidates []<span class="keyword">int</span>, target <span class="keyword">int</span>)</span> <span class="params">(ans [][]<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    comb := []<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">    <span class="keyword">var</span> dfs <span class="function"><span class="keyword">func</span><span class="params">(target, idx <span class="keyword">int</span>)</span></span></span><br><span class="line">    dfs = <span class="function"><span class="keyword">func</span><span class="params">(target, idx <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">        <span class="comment">//候选用完</span></span><br><span class="line">        <span class="keyword">if</span> idx == <span class="built_in">len</span>(candidates)&#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//成功匹配</span></span><br><span class="line">        <span class="keyword">if</span> target == <span class="number">0</span>&#123;</span><br><span class="line">            ans = <span class="built_in">append</span>(ans, <span class="built_in">append</span>([]<span class="keyword">int</span>&#123;&#125;,comb...))</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 不使用第idx个数</span></span><br><span class="line">        dfs(target, idx+<span class="number">1</span>)</span><br><span class="line">        <span class="comment">// 选择当前数</span></span><br><span class="line">        <span class="keyword">if</span> target - candidates[idx] &gt;= <span class="number">0</span>&#123;</span><br><span class="line">            comb = <span class="built_in">append</span>(comb,candidates[idx])</span><br><span class="line">            dfs(target-candidates[idx],idx)</span><br><span class="line">            comb = comb[:<span class="built_in">len</span>(comb)<span class="number">-1</span>]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dfs(target, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="20-接雨水"><a href="#20-接雨水" class="headerlink" title="20.接雨水"></a>20.接雨水</h2><p><img src="/2021/10/30/LeetHot4/5.jpg" alt></p>
+<p>最经典的单调栈问题之一。单调栈首先是一个栈，符合后进先出原则，再此之上，每次数据入栈时都要与栈顶元素比较，如果不符合单调增(减)，则要将栈顶出栈知道符合为止。本题利用这一特性，维护了一个单调递减栈，让柱子高度不断入栈，当栈顶不符合递减需要出栈时，就表示可以接到雨水了，接到的量为栈顶左侧第一个柱子，栈顶和要入栈的柱子之间接的水，如果用图画出来就是一层一层的考虑接水。</p>
+<p>另外，作为一道经典题，还有动态规划和双指针的做法，核心思路是记录每个位置向左和向右的最大高度，然后计算每个下标位置能接的雨水量(min(leftMax[i],rightMax[i]-height[i])。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">trap</span><span class="params">(height []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="comment">// 初始化</span></span><br><span class="line">    add := <span class="number">0</span></span><br><span class="line">    <span class="keyword">var</span> stack []<span class="keyword">int</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> height &#123;</span><br><span class="line">        <span class="keyword">if</span> emptyStack(&amp;stack) || height[i] &lt; height[stack[<span class="built_in">len</span>(stack)<span class="number">-1</span>]] &#123;</span><br><span class="line">            inStack(&amp;stack, i)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> !emptyStack(&amp;stack) &amp;&amp; height[i] &gt; height[stack[<span class="built_in">len</span>(stack)<span class="number">-1</span>]]&#123;</span><br><span class="line">                <span class="keyword">if</span> <span class="built_in">len</span>(stack)&gt;<span class="number">1</span> &#123;</span><br><span class="line">                    left := stack[<span class="built_in">len</span>(stack)<span class="number">-2</span>]</span><br><span class="line">                    right := stack[<span class="built_in">len</span>(stack)<span class="number">-1</span>]</span><br><span class="line">                    add += (i-left<span class="number">-1</span>)*(Min(height[left],height[i])-height[right])</span><br><span class="line">                &#125;</span><br><span class="line">                outStack(&amp;stack)</span><br><span class="line">            &#125;</span><br><span class="line">            inStack(&amp;stack, i)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> add</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Min</span><span class="params">(x, y <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> x &lt; y &#123;</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> y</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">emptyStack</span><span class="params">(s *[]<span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">len</span>(*s) == <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">inStack</span><span class="params">(s *[]<span class="keyword">int</span>, v <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    *s = <span class="built_in">append</span>(*s, v)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">outStack</span><span class="params">(s *[]<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(*s) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        res := (*s)[<span class="built_in">len</span>(*s)<span class="number">-1</span>]</span><br><span class="line">        *s = (*s)[<span class="number">0</span> : <span class="built_in">len</span>(*s)<span class="number">-1</span>]</span><br><span class="line">        <span class="keyword">return</span> res</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+          
+            <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          
+            <a href="/tags/LeetCode/" rel="tag"># LeetCode</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/09/30/GalaxyHack/" rel="next" title="银河劫匪:DNS投毒以控制互联网资源">
+                <i class="fa fa-chevron-left"></i> 银河劫匪:DNS投毒以控制互联网资源
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/10/30/LeetHot7/" rel="prev" title="LeetCode热题:七">
+                LeetCode热题:七 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jfif"
+                alt="Cinder" />
+            
+              <p class="site-author-name" itemprop="name">Cinder</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">48</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#16-最长有效括号"><span class="nav-number">1.</span> <span class="nav-text">16.最长有效括号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-搜索旋转排序数组"><span class="nav-number">2.</span> <span class="nav-text">17.搜索旋转排序数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-在排序数组中查找元素的第一个和最后一个位置"><span class="nav-number">3.</span> <span class="nav-text">18.在排序数组中查找元素的第一个和最后一个位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-在排序数组中查找元素的第一个和最后一个位置"><span class="nav-number">4.</span> <span class="nav-text">19.在排序数组中查找元素的第一个和最后一个位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#20-接雨水"><span class="nav-number">5.</span> <span class="nav-text">20.接雨水</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cinder</span>
+
+  
+</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
