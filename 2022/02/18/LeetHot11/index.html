@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="数据结构,算法,LeetCode," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="51.环形链表二 核心仍然是快慢指针，但是加了一点数学和找规律。在第一次快慢指针相遇时，从这个位置到链表末尾的距离等于从链表头部到环形开始的距离。 123456789101112131415161718192021222324252627282930func detectCycle(head *ListNode) *ListNode &amp;#123;    if head &#x3D;&#x3D; nil&amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LeetCode热题:十一">
+<meta property="og:url" content="http://yoursite.com/2022/02/18/LeetHot11/index.html">
+<meta property="og:site_name" content="Web低手的笔记本">
+<meta property="og:description" content="51.环形链表二 核心仍然是快慢指针，但是加了一点数学和找规律。在第一次快慢指针相遇时，从这个位置到链表末尾的距离等于从链表头部到环形开始的距离。 123456789101112131415161718192021222324252627282930func detectCycle(head *ListNode) *ListNode &amp;#123;    if head &#x3D;&#x3D; nil&amp;#123;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/LeetHot11/1.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/LeetHot11/2.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/LeetHot11/3.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/LeetHot11/4.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/LeetHot11/5.png">
+<meta property="article:published_time" content="2022-02-18T07:12:45.000Z">
+<meta property="article:modified_time" content="2022-02-18T07:12:45.295Z">
+<meta property="article:author" content="Cinder">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="LeetCode">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2022/02/18/LeetHot11/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/02/18/LeetHot11/"/>
+
+
+
+
+
+  <title>LeetCode热题:十一 | Web低手的笔记本</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Web低手的笔记本</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/02/18/LeetHot11/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cinder">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jfif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Web低手的笔记本">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">LeetCode热题:十一</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-02-18T15:12:45+08:00">
+                2022-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="51-环形链表二"><a href="#51-环形链表二" class="headerlink" title="51.环形链表二"></a>51.环形链表二</h2><p><img src="/2022/02/18/LeetHot11/1.png" alt></p>
+<p>核心仍然是快慢指针，但是加了一点数学和找规律。在第一次快慢指针相遇时，从这个位置到链表末尾的距离等于从链表头部到环形开始的距离。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">detectCycle</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> head == <span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    guard := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    guard.Next = head</span><br><span class="line">    fast,slow := guard,guard</span><br><span class="line">    index := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> <span class="literal">true</span>&#123;</span><br><span class="line">        slow = slow.Next</span><br><span class="line">        fast = fast.Next</span><br><span class="line">        <span class="keyword">if</span> fast == <span class="literal">nil</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line">        fast = fast.Next</span><br><span class="line">        <span class="keyword">if</span> fast == <span class="literal">nil</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line">        index += <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span>(fast==slow)&#123;</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> guard != slow&#123;</span><br><span class="line">        guard = guard.Next</span><br><span class="line">        slow = slow.Next</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> guard</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="52-LRU缓存机制"><a href="#52-LRU缓存机制" class="headerlink" title="52.LRU缓存机制"></a>52.LRU缓存机制</h2><p><img src="/2022/02/18/LeetHot11/2.png" alt></p>
+<p>要求所有操作在O(1)复杂度中实现，内存释放机制采用最近最少使用机制。因此使用双向链表储存键和值，方便挪动位置。再用一个map储存键到节点的映射，方便能直接找到目标节点。最后再维护一个头结点和尾节点，方便插入和删除。当节点入栈或者节点被更新或调用时，将节点挪动到链表头部；当缓存不够需要清理时，删除链表尾部节点，并对应删除map中的键值。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> LRUCache <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="built_in">cap</span> <span class="keyword">int</span></span><br><span class="line">    site <span class="keyword">map</span>[<span class="keyword">int</span>]*Node</span><br><span class="line">    head *Node</span><br><span class="line">    tail *Node</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Node <span class="keyword">struct</span>&#123;</span><br><span class="line">    Key <span class="keyword">int</span></span><br><span class="line">    Val <span class="keyword">int</span></span><br><span class="line">    Next *Node</span><br><span class="line">    Last *Node</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Constructor</span><span class="params">(capacity <span class="keyword">int</span>)</span> <span class="title">LRUCache</span></span> &#123;</span><br><span class="line">    res := LRUCache&#123;</span><br><span class="line">        <span class="built_in">cap</span> : capacity,</span><br><span class="line">        site : <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int</span>]*Node),</span><br><span class="line">        <span class="comment">//两个标兵节点，防止指针落空</span></span><br><span class="line">        head : <span class="built_in">new</span>(Node),</span><br><span class="line">        tail : <span class="built_in">new</span>(Node),</span><br><span class="line">        &#125;</span><br><span class="line">    res.head.Last = res.tail</span><br><span class="line">    res.tail.Next  =res.head</span><br><span class="line">    <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *LRUCache)</span> <span class="title">Get</span><span class="params">(key <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> v,ok := this.site[key];ok&#123;</span><br><span class="line">        v.Last.Next,v.Next.Last = v.Next,v.Last</span><br><span class="line">        this.head.Last,this.head.Last.Next,v.Next,v.Last = v,v,this.head,this.head.Last</span><br><span class="line">        <span class="keyword">return</span> v.Val</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *LRUCache)</span> <span class="title">Put</span><span class="params">(key <span class="keyword">int</span>, value <span class="keyword">int</span>)</span></span>  &#123;</span><br><span class="line">    <span class="keyword">if</span> v,ok := this.site[key];ok&#123; <span class="comment">//更新值</span></span><br><span class="line">        v.Val = value</span><br><span class="line">        v.Last.Next,v.Next.Last = v.Next,v.Last</span><br><span class="line">        this.head.Last,this.head.Last.Next,v.Next,v.Last = v,v,this.head,this.head.Last</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(this.site) &lt; this.<span class="built_in">cap</span>&#123; <span class="comment">//有空间</span></span><br><span class="line">            tmp := <span class="built_in">new</span>(Node)</span><br><span class="line">            tmp.Val = value</span><br><span class="line">            tmp.Key = key</span><br><span class="line">            this.site[key] = tmp</span><br><span class="line">            this.head.Last,this.head.Last.Next,tmp.Next,tmp.Last = tmp,tmp,this.head,this.head.Last</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123; <span class="comment">//先删后加</span></span><br><span class="line">            <span class="built_in">delete</span>(this.site,this.tail.Next.Key)</span><br><span class="line">            this.tail.Next,this.tail.Next.Next.Last = this.tail.Next.Next,this.tail</span><br><span class="line">            tmp := <span class="built_in">new</span>(Node)</span><br><span class="line">            tmp.Val = value</span><br><span class="line">            tmp.Key = key</span><br><span class="line">            this.site[key] = tmp</span><br><span class="line">            this.head.Last,this.head.Last.Next,tmp.Next,tmp.Last = tmp,tmp,this.head,this.head.Last</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="53-排序链表"><a href="#53-排序链表" class="headerlink" title="53.排序链表"></a>53.排序链表</h2><p><img src="/2022/02/18/LeetHot11/3.png" alt></p>
+<p>要求以O(n*logn)的时间复杂度完成，基本上首先考虑二分或者归并这类算法。本题而言，可以将排序流程转换为排序前半个链表-》排序后半个链表-》整合前后两个有序链表。其中，找将链表分为前半后半可以使用快慢指针的方法：当快指针遍历完链表，慢指针就作为前半链表的尾部即可。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">merge</span><span class="params">(l1,l2 *ListNode)</span> *<span class="title">ListNode</span></span>&#123;</span><br><span class="line">    head := <span class="built_in">new</span>(ListNode)</span><br><span class="line">    head.Val = <span class="number">-1000000</span></span><br><span class="line">    now := head</span><br><span class="line">    <span class="keyword">for</span> l1 !=<span class="literal">nil</span> &amp;&amp; l2!=<span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> l1.Val &lt; l2.Val&#123;</span><br><span class="line">            now.Next = l1</span><br><span class="line">            l1 = l1.Next</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            now.Next = l2</span><br><span class="line">            l2 = l2.Next</span><br><span class="line">        &#125;</span><br><span class="line">        now = now.Next</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> l1 != <span class="literal">nil</span>&#123;</span><br><span class="line">        now.Next = l1</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> l2 != <span class="literal">nil</span>&#123;</span><br><span class="line">        now.Next = l2</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> head.Next</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sortList</span><span class="params">(head *ListNode)</span> *<span class="title">ListNode</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> head == <span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> head.Next == <span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> head</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> slow,fast *ListNode</span><br><span class="line">    slow = head</span><br><span class="line">    fast = head</span><br><span class="line">    <span class="keyword">for</span> fast.Next != <span class="literal">nil</span> &amp;&amp; fast.Next.Next != <span class="literal">nil</span>&#123;</span><br><span class="line">        slow = slow.Next</span><br><span class="line">        fast = fast.Next.Next</span><br><span class="line">    &#125;</span><br><span class="line">    l2 := slow.Next</span><br><span class="line">    slow.Next = <span class="literal">nil</span></span><br><span class="line">    <span class="keyword">return</span> merge(sortList(head),sortList(l2))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="54-乘积最大子数组"><a href="#54-乘积最大子数组" class="headerlink" title="54.乘积最大子数组"></a>54.乘积最大子数组</h2><p><img src="/2022/02/18/LeetHot11/4.png" alt></p>
+<p>动态规划，由于乘积有负负得正的特点，所以除了用dp数组保存以第i数为结尾的最大乘积，还要用数组fu保存以第i个数为结尾的最小负数乘积。在计算时，将nums[i]和dp[i-1]的正负情况分为4种考虑清楚即可，比较简单。最后，可以看到在维护dp[i]和fu[i]时，只用到了dp[i-1]和fu[i-1]，所以可以不使用数组，直接维护变量dp、fu即可，进一步优化空间复杂度。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">maxProduct</span><span class="params">(nums []<span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    fu := <span class="number">0</span></span><br><span class="line">    dp := nums[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">if</span> nums[<span class="number">0</span>] &lt; <span class="number">0</span>&#123;</span><br><span class="line">        fu = nums[<span class="number">0</span>]</span><br><span class="line">    &#125;</span><br><span class="line">    max := dp</span><br><span class="line">    <span class="keyword">for</span> i :=<span class="number">1</span>;i&lt;<span class="built_in">len</span>(nums);i++&#123;</span><br><span class="line">        <span class="keyword">if</span> nums[i] == <span class="number">0</span>&#123;</span><br><span class="line">            dp,fu = <span class="number">0</span>,<span class="number">0</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span> nums[i] &gt; <span class="number">0</span>&#123;</span><br><span class="line">            <span class="keyword">if</span> dp &lt;= <span class="number">0</span>&#123;</span><br><span class="line">                dp,fu = nums[i],fu * nums[i]</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                dp,fu = dp * nums[i],fu * nums[i]</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">if</span> dp &lt;= <span class="number">0</span>&#123;</span><br><span class="line">                dp,fu = fu * nums[i],nums[i]</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                dp,fu = fu * nums[i],dp * nums[i]</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> dp&gt;max&#123;</span><br><span class="line">            max = dp</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> max</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="55-最小栈"><a href="#55-最小栈" class="headerlink" title="55.最小栈"></a>55.最小栈</h2><p><img src="/2022/02/18/LeetHot11/5.png" alt></p>
+<p>由于栈严格满足后进先出规则，所以这道题做简单的方法就是同时维护两个栈，第一个栈存放栈中的值，第二个栈存放对应状态的最小值。也就是说，第二个栈的栈顶永远表示是栈中元素的最小值，当元素入栈时，如果比第二个栈的栈顶大，则正常入第一个栈，然后将第二个的栈顶值入第二个栈。保持两个栈的同步关系，从而总能以常数时间内检索栈中的最小元素。</p>
+<p>此外，还可以进一步对空间复杂度进行优化，使用一个栈和一个变量实现最小栈。对于入栈操作，栈空是直接入栈，栈不空是则入栈当前最小值(变量维护)与元素的差值，如果元素值较小，在入栈后更新当前最小值。通过上述的入栈操作，完全可以满足获取最小值的要求，现在剩下的问题就是出栈和取栈顶时如何处理。显然，由上述入栈操作，对于取栈顶，当栈中只有一个元素时，直接取即可。栈不为空时，如果栈顶为正数，说明该元素小于入栈时的栈中最小值，因此入站后维护当前最小值的变量就会被更新为该元素的值，返回最小值即可；反之栈顶为负数，则说明入栈后最小值没有更新，此时栈顶=最小值-元素值，为了取该元素值，就用最小值-栈顶即可。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MinStack <span class="keyword">struct</span> &#123;</span><br><span class="line">    content []<span class="keyword">int</span></span><br><span class="line">    min <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Constructor</span><span class="params">()</span> <span class="title">MinStack</span></span> &#123;</span><br><span class="line">    res := MinStack&#123;</span><br><span class="line">        content:[]<span class="keyword">int</span>&#123;&#125;,</span><br><span class="line">        min : <span class="number">10000000000</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MinStack)</span> <span class="title">Push</span><span class="params">(val <span class="keyword">int</span>)</span></span>  &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(this.content) == <span class="number">0</span>&#123;</span><br><span class="line">        this.content = <span class="built_in">append</span>(this.content,val)</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        this.content = <span class="built_in">append</span>(this.content,this.min-val)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> val &lt; this.min&#123;</span><br><span class="line">        this.min = val</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MinStack)</span> <span class="title">Pop</span><span class="params">()</span></span>  &#123;</span><br><span class="line">    top := this.content[<span class="built_in">len</span>(this.content)<span class="number">-1</span>] </span><br><span class="line">    this.content = this.content[:<span class="built_in">len</span>(this.content)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">if</span> top &gt; <span class="number">0</span> &#123;</span><br><span class="line">        this.min = top + this.min</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MinStack)</span> <span class="title">Top</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    top := this.content[<span class="built_in">len</span>(this.content)<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(this.content) == <span class="number">1</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> top</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> top &gt; <span class="number">0</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> this.min</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> this.min - top</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MinStack)</span> <span class="title">GetMin</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> this.min</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+          
+            <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          
+            <a href="/tags/LeetCode/" rel="tag"># LeetCode</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/02/18/LeetHot10/" rel="next" title="LeetCode热题:十">
+                <i class="fa fa-chevron-left"></i> LeetCode热题:十
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/02/18/99FP/" rel="prev" title="有限样本下的暗网指纹识别">
+                有限样本下的暗网指纹识别 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jfif"
+                alt="Cinder" />
+            
+              <p class="site-author-name" itemprop="name">Cinder</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">54</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">61</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#51-环形链表二"><span class="nav-number">1.</span> <span class="nav-text">51.环形链表二</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#52-LRU缓存机制"><span class="nav-number">2.</span> <span class="nav-text">52.LRU缓存机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#53-排序链表"><span class="nav-number">3.</span> <span class="nav-text">53.排序链表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#54-乘积最大子数组"><span class="nav-number">4.</span> <span class="nav-text">54.乘积最大子数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#55-最小栈"><span class="nav-number">5.</span> <span class="nav-text">55.最小栈</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cinder</span>
+
+  
+</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

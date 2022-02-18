@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="代码审计,白盒,CodeQL," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="GATE-ONE任意文件读取本笔记针对漏洞原理部分的分析学习自“从RCE到CVE：攻防实战中的漏洞挖掘”。GateOne是一个基于tornado和html5技术的开源web ssh项目，源代码可以上GitHub下载。其server.py中的downloads的处理函数未对输入进行处理，直接输入到敏感函数io.open中，造成任意文件读取。 先写污点追踪，看看能不能找到参考文章中提到的漏洞： 123">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CodeQL挖洞:一">
+<meta property="og:url" content="http://yoursite.com/2022/02/18/CodeQL1/index.html">
+<meta property="og:site_name" content="Web低手的笔记本">
+<meta property="og:description" content="GATE-ONE任意文件读取本笔记针对漏洞原理部分的分析学习自“从RCE到CVE：攻防实战中的漏洞挖掘”。GateOne是一个基于tornado和html5技术的开源web ssh项目，源代码可以上GitHub下载。其server.py中的downloads的处理函数未对输入进行处理，直接输入到敏感函数io.open中，造成任意文件读取。 先写污点追踪，看看能不能找到参考文章中提到的漏洞： 123">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL1/1.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL1/2.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL1/3.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL1/4.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL1/5.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL1/6.jpg">
+<meta property="article:published_time" content="2022-02-18T07:12:01.000Z">
+<meta property="article:modified_time" content="2022-02-18T07:12:01.909Z">
+<meta property="article:author" content="Cinder">
+<meta property="article:tag" content="代码审计">
+<meta property="article:tag" content="白盒">
+<meta property="article:tag" content="CodeQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2022/02/18/CodeQL1/1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/02/18/CodeQL1/"/>
+
+
+
+
+
+  <title>CodeQL挖洞:一 | Web低手的笔记本</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Web低手的笔记本</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/02/18/CodeQL1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cinder">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jfif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Web低手的笔记本">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CodeQL挖洞:一</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-02-18T15:12:01+08:00">
+                2022-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="GATE-ONE任意文件读取"><a href="#GATE-ONE任意文件读取" class="headerlink" title="GATE-ONE任意文件读取"></a>GATE-ONE任意文件读取</h2><p>本笔记针对漏洞原理部分的分析学习自<a href="https://jishuin.proginn.com/p/763bfbd63106" target="_blank" rel="noopener">“从RCE到CVE：攻防实战中的漏洞挖掘”</a>。GateOne是一个基于tornado和html5技术的开源web ssh项目，源代码可以上GitHub<a href="https://github.com/liftoff/GateOne" target="_blank" rel="noopener">下载</a>。其server.py中的downloads的处理函数未对输入进行处理，直接输入到敏感函数io.open中，造成任意文件读取。</p>
+<p>先写污点追踪，看看能不能找到参考文章中提到的漏洞：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import python</span><br><span class="line">import semmle.python.dataflow.new.DataFlow</span><br><span class="line">import semmle.python.dataflow.new.TaintTracking</span><br><span class="line">import semmle.python.dataflow.new.RemoteFlowSources</span><br><span class="line">import semmle.python.Concepts</span><br><span class="line"></span><br><span class="line">class RemoteToFileConfiguration extends TaintTracking::Configuration &#123;</span><br><span class="line">  RemoteToFileConfiguration() &#123; this &#x3D; &quot;RemoteToFileConfiguration&quot; &#125;</span><br><span class="line"></span><br><span class="line">  override predicate isSource(DataFlow::Node source) &#123;</span><br><span class="line">    source instanceof RemoteFlowSource</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  override predicate isSink(DataFlow::Node sink) &#123;</span><br><span class="line">    sink &#x3D; any(FileSystemAccess fa).getAPathArgument()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">from DataFlow::Node input, DataFlow::Node fileAccess, RemoteToFileConfiguration config</span><br><span class="line">where config.hasFlow(input, fileAccess)</span><br><span class="line">select fileAccess.getLocation(), input.getLocation()</span><br></pre></td></tr></table></figure>
+
+<p>效果出人意料的不错，直接定位到文章中提到的漏洞位置。</p>
+<p><img src="/2022/02/18/CodeQL1/1.jpg" alt></p>
+<p>再加上一项select input.getLocation()，即可直接标记出污点在局部代码中的源头。</p>
+<h2 id="GATE-ONE远程代码执行"><a href="#GATE-ONE远程代码执行" class="headerlink" title="GATE-ONE远程代码执行"></a>GATE-ONE远程代码执行</h2><p>用同样的套路，把查询语句中的FileSystemAccess换为CodeExecution相关内容，但是没有查到任何内容。重新审视代码，可以看到被拼接的可控输入command被输入到new_multiplex函数中。</p>
+<p><img src="/2022/02/18/CodeQL1/2.jpg" alt></p>
+<p>追踪这个函数，最后发现指令通过<code>os.execvpe()</code>执行。可惜的是这个函数并未被CodeQL自带的<code>CodeExecution</code>类定义，需要进行扩充(扩充一个类应该是继承它的父类而不是继承它本身)。自定义一个代表代码执行节点的类即可发现<code>os.execvpe()</code>。</p>
+<p><img src="/2022/02/18/CodeQL1/3.jpg" alt></p>
+<p>在查阅文档之后，上述代码并不是最优解决方案。看CodeQL源码发现有表示命令执行的类似乎有两种，一种是<code>CodeExecution</code>类，另一种是<code>CodeExecution::Range</code>类。根据文档，继承前者用于优化针对现有API的模型，继承后者需要实现抽象函数<code>getcode()</code>,用于实现对新API进行建模。后者本身属于抽象类，可以理解为<code>CodeExecution</code>类的规则模板，直接使用无法查询到内容，但是在查询文件中定义后，再可以使用<code>CodeExecution</code>类，就能找到在<code>CodeExecution::Range</code>类中自定义的新API，我还不是很明白它的运行逻辑是什么。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">class MyCodeExec extends CodeExecution::Range&#123;</span><br><span class="line">  MyCodeExec()&#123;</span><br><span class="line">    exists (DataFlow::CallCfgNode call |</span><br><span class="line">      this &#x3D; call and</span><br><span class="line">      call &#x3D; API::moduleImport(&quot;os&quot;).getMember(&quot;execvpe&quot;).getACall()</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">  override DataFlow::Node getCode()&#123;</span><br><span class="line">    exists(DataFlow::CallCfgNode call | call &#x3D; this and result &#x3D; call.getArg(0))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">from CodeExecution c</span><br><span class="line">select c,c.getCode(),c.getLocation()</span><br></pre></td></tr></table></figure>
+
+<p>为了搞清Range的工作原理，翻了一下CodeQL的源码，可以看到在类<code>CodeExecution</code>的实现中，核心就是声明了一个<code>CodeExecution::Range</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class CodeExecution extends DataFlow::Node &#123;</span><br><span class="line">  CodeExecution::Range range;</span><br><span class="line"></span><br><span class="line">  CodeExecution() &#123; this &#x3D; range &#125;</span><br><span class="line"></span><br><span class="line">  &#x2F;** Gets the argument that specifies the code to be executed. *&#x2F;</span><br><span class="line">  DataFlow::Node getCode() &#123; result &#x3D; range.getCode() &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了弄懂这段代码，我们先上一段示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">class SmallInt extends int &#123;</span><br><span class="line">    SmallInt() &#123; this &#x3D; [1 .. 4] &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  class DivisibleInt extends SmallInt &#123;</span><br><span class="line">    SmallInt divisor;   &#x2F;&#x2F; declaration of the field &#96;divisor&#96;</span><br><span class="line">    DivisibleInt() &#123; this % divisor &#x3D; 0 &#125;</span><br><span class="line">  </span><br><span class="line">    SmallInt getADivisor() &#123; result &#x3D; divisor &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">from DivisibleInt i</span><br><span class="line">select i, i.getADivisor()</span><br></pre></td></tr></table></figure>
+
+<p>运行结果如下图所示，可以看到在类<code>DivisibleInt</code>中声明了一个变量<code>divisor</code>，这里是比较反常识的，因为在ql语句执行的全过程中均没有对这个变量进行赋值。实际上，这里的<code>divisor</code>也不是一个具体的值，而是所有符合谓词<code>DivisibleInt()</code>的值，由于限定了<code>SmallInt</code>的范围是1到4,所以ql语句等同于在4X4种组合中找到能整除的情况。</p>
+<p><img src="/2022/02/18/CodeQL1/4.jpg" alt></p>
+<p>另一方面，官方文档表示，<a href="https://codeql.github.com/docs/ql-language-reference/types/" target="_blank" rel="noopener">抽象类被定义为其子类的联合。对于抽象类中的值，它必须满足类本身的特征谓词和子类的特征谓词。</a>，弄清这两块基本就能看懂<code>CodeExecution</code>类的定义。CodeQL一定内建了基础的<code>CodeExecution::Range</code>实现（见下图），并且由于我的查询代码中也写了一个抽象类<code>CodeExecution::Range</code>的实现，因此在调用<code>CodeExecution</code>类会将内建的<code>CodeExecution::Range</code>和我自定义的<code>CodeExecution::Range</code>取并集，因此实现对<code>CodeExecution</code>类的扩展，这个写法应该是官方推荐的写法。</p>
+<p><img src="/2022/02/18/CodeQL1/5.jpg" alt></p>
+<p>最后，对官方内建的Range写法进行模仿,使用多重继承的方式（同时集成多个不冲突的类，方便写谓词函数）完成最终<code>CodeExecution</code>类的扩展。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class MyCodeExec extends CodeExecution::Range, DataFlow::CallCfgNode&#123;</span><br><span class="line">  MyCodeExec()&#123; </span><br><span class="line">      this &#x3D; API::moduleImport(&quot;os&quot;).getMember(&quot;execvpe&quot;).getACall()</span><br><span class="line">  &#125;</span><br><span class="line">  override DataFlow::Node getCode()&#123;</span><br><span class="line">    result &#x3D; this.getArg(0)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>至此，sink部分告一段落，现在需要对source进行补充即可开始污点分析。直接查询<code>RemoteFlowSource</code>是能识别到处理websocket请求的handler的，但是漏洞点在SSH插件中，似乎是在运行时动态注册进去的，因此无法写出查询语句利用污点分析直接找出该数据流。并且由于建库的问题，同一个文件下不同函数之间都无法完成污点追踪，最后只能写一个基础的QL语句，再由一到多进行扩展。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">class RemoteToExecConfiguration extends TaintTracking::Configuration &#123;</span><br><span class="line">  RemoteToExecConfiguration() &#123; this &#x3D; &quot;RemoteToExecConfiguration&quot; &#125;</span><br><span class="line"></span><br><span class="line">  override predicate isSource(DataFlow::Node source) &#123;</span><br><span class="line">    &#x2F;&#x2F; source instanceof RemoteFlowSource</span><br><span class="line">    exists(Function f | f.getName().matches(&quot;%&quot;)</span><br><span class="line">    | source &#x3D; DataFlow::parameterNode(f.getArg(1)))</span><br><span class="line">  &#125;</span><br><span class="line">  override predicate isSink(DataFlow::Node sink) &#123;</span><br><span class="line">    sink instanceof DataFlow::Node</span><br><span class="line">    &#x2F;&#x2F; sink &#x3D; any(DataFlow::CallCfgNode c).getArg(0)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">from Attribute a, DataFlow::Node input, DataFlow::Node fileAccess, RemoteToExecConfiguration config</span><br><span class="line">where </span><br><span class="line">config.hasFlow(input, fileAccess) and</span><br><span class="line">a.getName() &#x3D; &quot;new_multiplex&quot; and</span><br><span class="line">a.getParentNode() &#x3D; fileAccess.asExpr().getParentNode()</span><br><span class="line">select input,fileAccess</span><br></pre></td></tr></table></figure>
+
+<p>上述QL语句能找出sink和source在同一个函数中的漏洞（按理说应该可以跨函数甚至跨文件追踪，因为使用的是全局污点追踪），但是例如从<code>generate_new_keypair</code>中向<code>openssh_generate_new_keypair</code>传参调用的数据流无法追踪到，感觉是默认追踪规则有问题。再一次翻阅CodeQL的文档，发现污点追踪和数据流类中还有两个可选的抽象方法，<code>isAdditionalTaintStep</code>和<code>isSanitizer</code>，分别可以自定义的新的数据流生成规则或屏蔽已有的数据流生成规则。为了能解决上面的问题，我简单实现了一个<code>isAdditionalTaintStep</code>，虽然比较粗糙，但确实让数据流传下去了,找到漏洞点。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">override predicate isAdditionalTaintStep(DataFlow::Node node1, DataFlow::Node node2) &#123;</span><br><span class="line">  exists(Call c,Function f,Name n | </span><br><span class="line">  c.getFunc() &#x3D; n and </span><br><span class="line">  n.getId().matches(&quot;%_generate_new_keypair&quot;) and</span><br><span class="line">  node1.asExpr() &#x3D; c.getArg(1) and</span><br><span class="line">  f.getName().matches(&quot;%_generate_new_keypair&quot;) and</span><br><span class="line">  node2.asExpr() &#x3D; f.getArg(1))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/18/CodeQL1/6.jpg" alt></p>
+<p>总之，CodeQL功能还算强大，但是中文学习资源少，部分功能不完善，需要对项目框架有一定了解才能写出高效的QL代码。审计还是需要一定方法，不能全凭QL语句完成。该工具更适合将找到的个例写成一般化的QL语句，然后进行对整体项目的扫描。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag"># 代码审计</a>
+          
+            <a href="/tags/%E7%99%BD%E7%9B%92/" rel="tag"># 白盒</a>
+          
+            <a href="/tags/CodeQL/" rel="tag"># CodeQL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/10/30/DeepAID/" rel="next" title="解释与改进安全应用场景下的深度异常检测方法">
+                <i class="fa fa-chevron-left"></i> 解释与改进安全应用场景下的深度异常检测方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/02/18/CodeQL2/" rel="prev" title="CodeQL挖洞:二">
+                CodeQL挖洞:二 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jfif"
+                alt="Cinder" />
+            
+              <p class="site-author-name" itemprop="name">Cinder</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">54</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">61</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#GATE-ONE任意文件读取"><span class="nav-number">1.</span> <span class="nav-text">GATE-ONE任意文件读取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GATE-ONE远程代码执行"><span class="nav-number">2.</span> <span class="nav-text">GATE-ONE远程代码执行</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cinder</span>
+
+  
+</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

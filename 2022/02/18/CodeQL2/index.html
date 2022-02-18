@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="代码审计,白盒,CodeQL," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Gogs提权到RCE与路径遍历Gogs一款极易搭建的自助Git服务。之前曾暴露过攻击者通过创建项目，并在项目中上传伪造的session凭证，最后修改cookie将session地址恶意地指向伪造的凭证以实现提权，并结合管理员的git hook功能达到RCE目的的漏洞。因此对该项目的新版本v0.12.3又审计了一波，发现在特定配置下存在提权和目录遍历漏洞(CNVD-2021-100790和CNVD-">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CodeQL挖洞:二">
+<meta property="og:url" content="http://yoursite.com/2022/02/18/CodeQL2/index.html">
+<meta property="og:site_name" content="Web低手的笔记本">
+<meta property="og:description" content="Gogs提权到RCE与路径遍历Gogs一款极易搭建的自助Git服务。之前曾暴露过攻击者通过创建项目，并在项目中上传伪造的session凭证，最后修改cookie将session地址恶意地指向伪造的凭证以实现提权，并结合管理员的git hook功能达到RCE目的的漏洞。因此对该项目的新版本v0.12.3又审计了一波，发现在特定配置下存在提权和目录遍历漏洞(CNVD-2021-100790和CNVD-">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL2/1.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL2/2.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL2/3.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL2/4.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL2/5.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL2/6.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL2/7.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL2/8.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL2/9.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL2/10.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL2/11.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/02/18/CodeQL2/12.jpg">
+<meta property="article:published_time" content="2022-02-18T07:12:11.000Z">
+<meta property="article:modified_time" content="2022-02-18T07:14:30.414Z">
+<meta property="article:author" content="Cinder">
+<meta property="article:tag" content="代码审计">
+<meta property="article:tag" content="白盒">
+<meta property="article:tag" content="CodeQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2022/02/18/CodeQL2/1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/02/18/CodeQL2/"/>
+
+
+
+
+
+  <title>CodeQL挖洞:二 | Web低手的笔记本</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Web低手的笔记本</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/02/18/CodeQL2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cinder">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jfif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Web低手的笔记本">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CodeQL挖洞:二</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-02-18T15:12:11+08:00">
+                2022-02-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Gogs提权到RCE与路径遍历"><a href="#Gogs提权到RCE与路径遍历" class="headerlink" title="Gogs提权到RCE与路径遍历"></a>Gogs提权到RCE与路径遍历</h2><p><a href="https://gogs.io/" target="_blank" rel="noopener">Gogs</a>一款极易搭建的自助Git服务。之前曾暴露过攻击者通过创建项目，并在项目中上传伪造的session凭证，最后修改cookie将session地址恶意地指向伪造的凭证以实现提权，并结合管理员的git hook功能达到RCE目的的漏洞。因此对该项目的新版本<strong>v0.12.3</strong>又审计了一波，发现在特定配置下存在提权和目录遍历漏洞(CNVD-2021-100790和CNVD-2021-100268)。</p>
+<p>写了一个简单的污点追踪，<strong><em>source</em></strong>是codeql内建的不安全输入，<strong><em>sink</em></strong>是文件系统操作函数的第一个参数。ql语句详情如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import go</span><br><span class="line"></span><br><span class="line">class Configuration extends TaintTracking::Configuration &#123;</span><br><span class="line">  Configuration() &#123; this &#x3D; &quot;HttpOnly&quot; &#125;</span><br><span class="line"></span><br><span class="line">  override predicate isSource(DataFlow::Node source) &#123; </span><br><span class="line">    source instanceof UntrustedFlowSource</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  override predicate isSink(DataFlow::Node sink) &#123;</span><br><span class="line">     exists(FileSystemAccess fsa,DataFlow::Node n</span><br><span class="line">        | n &#x3D; fsa.(DataFlow::CallNode).getArgument(0)</span><br><span class="line">          | sink &#x3D; n)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">from Configuration c,DataFlow::Node source,DataFlow::Node sink</span><br><span class="line">where c.hasFlow(source, sink)</span><br><span class="line">select sink,sink.asExpr().getLocation(),source</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/18/CodeQL2/1.jpg" alt></p>
+<p>查询结果如上图所示，本次审计主要在一条结果中发现漏洞。如下图所示，sink为CreateUser函数中通过用户名创建路径来操作文件系统。source为authenticatedUser函数中直接从Header中取的数据。</p>
+<p><img src="/2022/02/18/CodeQL2/2.jpg" alt></p>
+<p><img src="/2022/02/18/CodeQL2/3.png" alt></p>
+<p><img src="/2022/02/18/CodeQL2/4.jpg" alt></p>
+<p>追踪authenticatedUser函数发现，该函数是在Contexter初始化时被调用，用于鉴权。进一步查看Contexter，可以看到是其作为中间件被注册在几乎所有请求中。</p>
+<p><img src="/2022/02/18/CodeQL2/5.jpg" alt></p>
+<p>发现该漏洞在整个程序的入口后再回过头来审计authenticatedUser函数，可以发现如果已存在登录状态，可以直接获取uid，如未登录，且开启反向代理身份验证，则会进入173行的选择分支，通过174行中直接从请求Header中获取的用户名，不进行任何验证或白名单过滤直接获得登录状态。</p>
+<p><img src="/2022/02/18/CodeQL2/6.jpg" alt></p>
+<p>因此，当开启此配置时，攻击者可以在请求头部添加反向代理身份验证标签：X-WEBAUTH-USER，直接跳过用户以管理员身份登录Gogs。</p>
+<p><img src="/2022/02/18/CodeQL2/7.jpg" alt></p>
+<p>之后只要新建一个项目，并使用只有管理员可以用的git hook功能，配合对项目的更新即可实现RCE。</p>
+<p><img src="/2022/02/18/CodeQL2/8.jpg" alt></p>
+<p><img src="/2022/02/18/CodeQL2/9.jpg" alt></p>
+<p>紧接上文，在authenticatedUser函数中如果X-WEBAUTH-USER给出的用户不存在，则会判断是否配置开启了自动创建反向代理账号。如果开启了该配置，也就会调用CreateUser，进而创建用户目录(也就是触发本文中QL语句的地方)。</p>
+<p><img src="/2022/02/18/CodeQL2/10.jpg" alt></p>
+<p>正常的注册途径会通过其使用的Macaron Web框架绑定数据类型以达到防止特殊用户名穿目录的目的。但是在此处创建用户时，并未对X-WEBAUTH-USER携带的用户名进行数据格式绑定，因此可以通过用户名达到目录遍历的目的。</p>
+<p><img src="/2022/02/18/CodeQL2/11.jpg" alt></p>
+<p>如下图所示，如果用户名所代表路径已经存在文件，则创建用户失败，返回的页面会处于未登录状态，因此可以用来判断路径是否存在，实现目录遍历。</p>
+<p><img src="/2022/02/18/CodeQL2/12.jpg" alt></p>
+<p>综上，可以看到虽然上面两个漏洞涉及到的配置一般都不会开启，因此直接去黑盒测可能很难找到这样的漏洞。但是使用CodeQL这种工具可以通过较为简单和通用的QL语句找到有问题的代码。缺点就是在环境搭建和熟悉项目中需要花费比较多的经历，很多地方还是需要实际将目标项目跑起来调试才好发现问题。另外也需要对项目编程语言和运行逻辑比较熟悉才好找到漏洞真正的入口点。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag"># 代码审计</a>
+          
+            <a href="/tags/%E7%99%BD%E7%9B%92/" rel="tag"># 白盒</a>
+          
+            <a href="/tags/CodeQL/" rel="tag"># CodeQL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/02/18/CodeQL1/" rel="next" title="CodeQL挖洞:一">
+                <i class="fa fa-chevron-left"></i> CodeQL挖洞:一
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/02/18/CodeQL3/" rel="prev" title="CodeQL挖洞:三">
+                CodeQL挖洞:三 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jfif"
+                alt="Cinder" />
+            
+              <p class="site-author-name" itemprop="name">Cinder</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">54</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">61</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Gogs提权到RCE与路径遍历"><span class="nav-number">1.</span> <span class="nav-text">Gogs提权到RCE与路径遍历</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cinder</span>
+
+  
+</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
