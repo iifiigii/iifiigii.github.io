@@ -639,7 +639,8 @@
       
         
           
-          Gogs提权到RCE与路径遍历Gogs一款极易搭建的自助Git服务。之前曾暴露过攻击者通过创建项目，并在项目中上传伪造的session凭证，最后修改cookie将session地址恶意地指向伪造的凭证以实现提权，并结合管理员的git hook功能达到RCE目的的漏洞。因此对该项目的新版本v0.12.3又审计了一波，发现在特定配置下存在提权和目录遍历漏洞(CNVD-2021-100790和CNVD-
+          Gogs提权到RCE与路径遍历Gogs一款极易搭建的自助Git服务。之前曾暴露过攻击者通过创建项目，并在项目中上传伪造的session凭证，最后修改cookie将session地址恶意地指向伪造的凭证以实现提权，并结合管理员的git hook功能达到RCE目的的漏洞。因此对该项目的新版本又审计了一波，发现在特定配置下存在提权和目录遍历漏洞。
+写了一个简单的污点追踪，source是codeql内建的
           ...
           <!--noindex-->
           <div class="post-button text-center">
