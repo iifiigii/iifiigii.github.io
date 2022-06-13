@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="代码审计,白盒,CodeQL," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="octorpki目录遍历漏洞octorpki是Cloudflare OctoRPKI是美国cloudflare（Cloudflare）的Cloudflare平台的RPKI工具箱。1.4.0版本爆出目录遍历漏洞（CVE-2021-3907）,该漏洞利用的条件比较苛刻，需要先拿到一个RPKI资料库，修改其rsync路径，在其使用rsync协议同步证书等内容时，由于其不会转移路径字符串中的”..”，因此">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CodeQL挖洞:四">
+<meta property="og:url" content="http://yoursite.com/2022/06/13/CodeQL4/index.html">
+<meta property="og:site_name" content="Web低手的笔记本">
+<meta property="og:description" content="octorpki目录遍历漏洞octorpki是Cloudflare OctoRPKI是美国cloudflare（Cloudflare）的Cloudflare平台的RPKI工具箱。1.4.0版本爆出目录遍历漏洞（CVE-2021-3907）,该漏洞利用的条件比较苛刻，需要先拿到一个RPKI资料库，修改其rsync路径，在其使用rsync协议同步证书等内容时，由于其不会转移路径字符串中的”..”，因此">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2022/06/13/CodeQL4/1.png">
+<meta property="og:image" content="http://yoursite.com/2022/06/13/CodeQL4/2.png">
+<meta property="og:image" content="http://yoursite.com/2022/06/13/CodeQL4/3.jpg">
+<meta property="og:image" content="http://yoursite.com/2022/06/13/CodeQL4/4.png">
+<meta property="og:image" content="http://yoursite.com/2022/06/13/CodeQL4/5.png">
+<meta property="og:image" content="http://yoursite.com/2022/06/13/CodeQL4/6.png">
+<meta property="og:image" content="http://yoursite.com/2022/06/13/CodeQL4/7.png">
+<meta property="article:published_time" content="2022-06-13T11:01:22.000Z">
+<meta property="article:modified_time" content="2022-06-13T11:01:22.457Z">
+<meta property="article:author" content="Cinder">
+<meta property="article:tag" content="代码审计">
+<meta property="article:tag" content="白盒">
+<meta property="article:tag" content="CodeQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2022/06/13/CodeQL4/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2022/06/13/CodeQL4/"/>
+
+
+
+
+
+  <title>CodeQL挖洞:四 | Web低手的笔记本</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Web低手的笔记本</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/06/13/CodeQL4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cinder">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jfif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Web低手的笔记本">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CodeQL挖洞:四</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2022-06-13T19:01:22+08:00">
+                2022-06-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="octorpki目录遍历漏洞"><a href="#octorpki目录遍历漏洞" class="headerlink" title="octorpki目录遍历漏洞"></a>octorpki目录遍历漏洞</h2><p><a href="https://github.com/cloudflare/cfrpki/" target="_blank" rel="noopener">octorpki</a>是Cloudflare OctoRPKI是美国cloudflare（Cloudflare）的Cloudflare平台的RPKI工具箱。1.4.0版本爆出目录遍历漏洞（CVE-2021-3907）,该漏洞利用的条件比较苛刻，需要先拿到一个RPKI资料库，修改其rsync路径，在其使用rsync协议同步证书等内容时，由于其不会转移路径字符串中的”..”，因此造成路径穿越，配合伪造的证书文件可能能够达到命令执行的效果。漏洞触发点修复补丁如下代码所示，官方的补丁仅仅是移除路径字符串中的”../“，显然这是不够强健的。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *state)</span> <span class="title">WriteRsyncFileOnDisk</span><span class="params">(path <span class="keyword">string</span>, data []<span class="keyword">byte</span>, withdraw <span class="keyword">bool</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	fPath, err := syncpki.GetDownloadPath(path, <span class="literal">true</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//省略了部分中间代码</span></span><br><span class="line">	fPath = strings.ReplaceAll(fPath, <span class="string">"../"</span>, <span class="string">""</span>)</span><br><span class="line">	f, err := os.Create(filepath.Join(s.Basepath, fPath))</span><br><span class="line">	<span class="comment">//省略了后面部分代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>很容易就能想到两种绕过方法：</p>
+<ul>
+<li>windows平台下使用’&#39;作为路径分隔符进行路径穿越</li>
+</ul>
+<p><img src="/2022/06/13/CodeQL4/1.png" alt></p>
+<p><img src="/2022/06/13/CodeQL4/2.png" alt></p>
+<p><img src="/2022/06/13/CodeQL4/3.jpg" alt></p>
+<ul>
+<li>利用补丁特性，在原有”../“中使用”../“进行分割，这样在补丁处理后就会还原为原来的payload</li>
+</ul>
+<p><img src="/2022/06/13/CodeQL4/4.png" alt></p>
+<p><img src="/2022/06/13/CodeQL4/5.png" alt></p>
+<p><img src="/2022/06/13/CodeQL4/6.png" alt></p>
+<p>由于不太好复现，所以这个漏洞直接报给了Cloudflare的CNA，也得到了官方确认。</p>
+<p><img src="/2022/06/13/CodeQL4/7.png" alt></p>
+<p>最后，使用简单的用CodeQL检查一下有无相似漏洞，扫完收工，下次针对使用Beego的Web项目建模一下可控输入。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import go</span><br><span class="line"></span><br><span class="line">class Configuration extends TaintTracking::Configuration &#123;</span><br><span class="line">    FileSystemAccess fsa;</span><br><span class="line">    Configuration() &#123; this &#x3D; &quot;HttpOnly&quot; &#125;</span><br><span class="line">    override predicate isSource(DataFlow::Node source) &#123; </span><br><span class="line">        source instanceof DataFlow::Node and</span><br><span class="line">        source.toString() &#x3D; &quot;path&quot;</span><br><span class="line">      &#125;</span><br><span class="line">  </span><br><span class="line">    override predicate isSink(DataFlow::Node sink) &#123;</span><br><span class="line">       exists(DataFlow::Node n</span><br><span class="line">        | n &#x3D; fsa.(DataFlow::CallNode).getArgument(0)</span><br><span class="line">        | sink &#x3D; n</span><br><span class="line">        ) and fsa.toString() &#x3D; &quot;call to Create&quot;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  from Configuration c,DataFlow::Node source,DataFlow::Node sink</span><br><span class="line">  where c.hasFlow(source, sink)</span><br><span class="line">  select sink.asExpr().getLocation(),sink,source</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag"># 代码审计</a>
+          
+            <a href="/tags/%E7%99%BD%E7%9B%92/" rel="tag"># 白盒</a>
+          
+            <a href="/tags/CodeQL/" rel="tag"># CodeQL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/02/18/ScriptChecker/" rel="next" title="ScriptChecker：用任务能力驯服第三方脚本">
+                <i class="fa fa-chevron-left"></i> ScriptChecker：用任务能力驯服第三方脚本
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/06/13/CodeQL5/" rel="prev" title="CodeQL挖洞:五">
+                CodeQL挖洞:五 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jfif"
+                alt="Cinder" />
+            
+              <p class="site-author-name" itemprop="name">Cinder</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">57</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">61</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#octorpki目录遍历漏洞"><span class="nav-number">1.</span> <span class="nav-text">octorpki目录遍历漏洞</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cinder</span>
+
+  
+</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
