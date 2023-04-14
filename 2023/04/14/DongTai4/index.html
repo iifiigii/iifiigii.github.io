@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="安全开发,IAST," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Engine漏洞分析书接上回，继续看search方法的收尾阶段。这部分源码中存在多个分支情况，对应各种优化，笔者挑出最朴素的一条路径梳理下大致流程。首先，从self.vul_stack中取出最后一个（按loop方法的逻辑，若发现完整的污点传播链，则self.vul_stack应该只有一组方法调用序列，且经过二次倒序排列后，方法调用组序列中的最后一个就是危险函数）。之后找到危险函数之前所有方法调用，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="洞态IAST初探:四">
+<meta property="og:url" content="http://yoursite.com/2023/04/14/DongTai4/index.html">
+<meta property="og:site_name" content="Web低手的笔记本">
+<meta property="og:description" content="Engine漏洞分析书接上回，继续看search方法的收尾阶段。这部分源码中存在多个分支情况，对应各种优化，笔者挑出最朴素的一条路径梳理下大致流程。首先，从self.vul_stack中取出最后一个（按loop方法的逻辑，若发现完整的污点传播链，则self.vul_stack应该只有一组方法调用序列，且经过二次倒序排列后，方法调用组序列中的最后一个就是危险函数）。之后找到危险函数之前所有方法调用，">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-14T07:40:17.000Z">
+<meta property="article:modified_time" content="2023-04-14T07:40:17.118Z">
+<meta property="article:author" content="Cinder">
+<meta property="article:tag" content="安全开发">
+<meta property="article:tag" content="IAST">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2023/04/14/DongTai4/"/>
+
+
+
+
+
+  <title>洞态IAST初探:四 | Web低手的笔记本</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Web低手的笔记本</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2023/04/14/DongTai4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cinder">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jfif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Web低手的笔记本">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">洞态IAST初探:四</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-04-14T15:40:17+08:00">
+                2023-04-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Engine漏洞分析"><a href="#Engine漏洞分析" class="headerlink" title="Engine漏洞分析"></a>Engine漏洞分析</h2><p>书接上回，继续看<strong><em>search</em></strong>方法的收尾阶段。这部分源码中存在多个分支情况，对应各种优化，笔者挑出最朴素的一条路径梳理下大致流程。首先，从<strong><em>self.vul_stack</em></strong>中取出最后一个（按loop方法的逻辑，若发现完整的污点传播链，则<strong><em>self.vul_stack</em></strong>应该只有一组方法调用序列，且经过二次倒序排列后，方法调用组序列中的最后一个就是危险函数）。之后找到危险函数之前所有方法调用，存储于<strong><em>before_stacks</em></strong>。再遍历<strong><em>before_stacks</em></strong>，若其中存在能传播至危险函数的方法调用则认为存在漏洞，调用<strong><em>find_other_branch_v2()</em></strong>方法搜索其它可能分支（部分回答了上一篇中笔者的疑问）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">final_stack = self.vul_stack[<span class="number">-1</span>][<span class="number">-1</span>]</span><br><span class="line"><span class="keyword">for</span> ind, method <span class="keyword">in</span> enumerate(self.method_pool):</span><br><span class="line">    <span class="keyword">if</span> method[<span class="string">'invokeId'</span>] == final_stack[<span class="string">'invokeId'</span>]:</span><br><span class="line">        index = ind</span><br><span class="line">before_stacks = self.method_pool[index:]</span><br><span class="line">the_second_stack = <span class="literal">None</span></span><br><span class="line">has_vul = <span class="literal">False</span></span><br><span class="line"><span class="keyword">for</span> stack <span class="keyword">in</span> before_stacks:</span><br><span class="line">    <span class="keyword">if</span> set(final_stack[<span class="string">'sourceHash'</span>]) &amp; set(</span><br><span class="line">            stack[<span class="string">'targetHash'</span>]):</span><br><span class="line">        the_second_stack = stack</span><br><span class="line">        has_vul = <span class="literal">True</span></span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> the_second_stack <span class="keyword">or</span> <span class="keyword">not</span> has_vul:</span><br><span class="line">    self.vul_source_signature = <span class="literal">None</span></span><br><span class="line">    self.vul_stack = []</span><br><span class="line">    self.pool_value = <span class="string">""</span></span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">current_link = current_link[<span class="number">0</span>:<span class="number">1</span>]</span><br><span class="line">extract_stack = self.find_other_branch_v2(</span><br><span class="line">    index, size, current_link, set(final_stack.get(<span class="string">'sourceHash'</span>)))</span><br><span class="line">self.vul_stack[<span class="number">0</span>] = extract_stack[::<span class="number">-1</span>]</span><br></pre></td></tr></table></figure>
+
+<p>这个<strong><em>find_other_branch_v2()</em></strong>方法就比较狂野，和<strong><em>loop()</em></strong>的判断方法一样，但不使用递归，而是发现合法的污点链就把上游方法的<strong><em>souce_hash</em></strong>以集合并集的方式整合到条件集合中。这样虽然搜的结果比较全面，但是笔者不认为这样处理得到<strong><em>current_link</em></strong>能正确反应方法调用间的链接关系。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">find_other_branch_v2</span><span class="params">(self, index, size, current_link, source_hash)</span>:</span></span><br><span class="line">	<span class="keyword">for</span> sub_index <span class="keyword">in</span> range(index + <span class="number">1</span>, size):</span><br><span class="line">	    sub_method = self.method_pool[sub_index]</span><br><span class="line">	    sub_target_hash = set(sub_method.get(<span class="string">'targetHash'</span>))</span><br><span class="line">	    sub_target_rpc_hash = set(sub_method.get(<span class="string">'targetHashForRpc'</span>, []))</span><br><span class="line">	    <span class="keyword">if</span> (((sub_target_hash <span class="keyword">and</span> sub_target_hash &amp; source_hash) <span class="keyword">or</span></span><br><span class="line">	         (sub_target_rpc_hash <span class="keyword">and</span> sub_target_rpc_hash &amp; source_hash))</span><br><span class="line">	            <span class="keyword">and</span> check_service_propagate_method_state(sub_method)):</span><br><span class="line">	        logger.info(<span class="string">f"stisfied <span class="subst">&#123;sub_method&#125;</span>"</span>)</span><br><span class="line">	        <span class="keyword">if</span> sub_method.get(<span class="string">'source'</span>):</span><br><span class="line">	            current_link.append(</span><br><span class="line">	                self.copy_method(sub_method, source=<span class="literal">True</span>))</span><br><span class="line">	        <span class="keyword">else</span>:</span><br><span class="line">	            current_link.append(</span><br><span class="line">	                self.copy_method(sub_method, propagator=<span class="literal">True</span>))</span><br><span class="line">	        source_hash = source_hash | set(</span><br><span class="line">	            sub_method.get(<span class="string">'sourceHash'</span>))</span><br><span class="line">	    <span class="keyword">else</span>:</span><br><span class="line">	        logger.debug(<span class="string">"not stisfied &#123;sub_method&#125;"</span>)</span><br><span class="line">	<span class="keyword">return</span> current_link</span><br></pre></td></tr></table></figure>
+
+<p>最后总结一下<strong><em>search()</em></strong>方法的收尾阶段：</p>
+<ul>
+<li>针对各种情况进行优化，但是在复用代码时可能考虑欠妥（比如代码中<strong><em>the_second_stack</em></strong>虽然在一些分支中有用，但在没用上分支中仍然保留）</li>
+<li><strong><em>find_other_branch_v2()</em></strong>中对<strong><em>current_link</em></strong>处理笔者没太搞懂，感觉有点问题</li>
+<li>覆盖了<strong><em>vul_stack[0]</em></strong>，笔者也不太理解为何这样做</li>
+</ul>
+<p>感觉可能是开源版的原因，删除了商业版的一些高级功能，导致源码有点不好理解。最后有兴趣的读者可以看下<a href="https://mp.weixin.qq.com/s?__biz=MzI2OTYzOTQzNw==&mid=2247487082&idx=2&sn=4e431701961436b848a235d7298da219&chksm=eadc0408ddab8d1e86726103c6642b67b23a3b9256252728b4b8edce77d735a0e07adc813f65&scene=27" target="_blank" rel="noopener">陌陌安全对DongTai IAST的改造</a>。至此，对于server端源码的解读先告一段落，下一回笔者将移步至JAVA Agent，看下到底如何获取程序的各类方法调用情况。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%AE%89%E5%85%A8%E5%BC%80%E5%8F%91/" rel="tag"># 安全开发</a>
+          
+            <a href="/tags/IAST/" rel="tag"># IAST</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/04/14/DongTai3/" rel="next" title="洞态IAST初探:三">
+                <i class="fa fa-chevron-left"></i> 洞态IAST初探:三
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jfif"
+                alt="Cinder" />
+            
+              <p class="site-author-name" itemprop="name">Cinder</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+                <a href="/archives">
+                  <span class="site-state-item-count">61</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">63</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Engine漏洞分析"><span class="nav-number">1.</span> <span class="nav-text">Engine漏洞分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cinder</span>
+
+  
+</div>
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
